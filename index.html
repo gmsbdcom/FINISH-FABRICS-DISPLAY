@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <title>FINISH FABRICS MCD  RACK DISPLAY</title>
+    
+
+  </head>
+    
+  <body>
+  <!doctype html>
+<html lang="bn">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FIMS Mobile Control System</title>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+        body {
+            box-sizing: border-box;
+        }
+
+        .inventory-card {
+            transition: all 0.3s ease;
+            transform: scale(1);
+        }
+
+        .inventory-card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .inventory-card:hover .card-buttons {
+            opacity: 1;
+        }
+
+        .card-buttons {
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+        }
+
+        .highlighted {
+            animation: highlight 2s ease-in-out infinite;
+            border: 4px solid #f59e0b !important;
+            box-shadow: 0 0 30px rgba(245, 158, 11, 0.8) !important;
+            transform: scale(1.05) !important;
+        }
+
+        @keyframes highlight {
+            0%, 100% {
+                border-color: #f59e0b;
+                box-shadow: 0 0 30px rgba(245, 158, 11, 0.8);
+            }
+            50% {
+                border-color: #ef4444;
+                box-shadow: 0 0 40px rgba(239, 68, 68, 0.9);
+            }
+        }
+
+        .loading-spinner {
+            border: 3px solid #f3f4f6;
+            border-top: 3px solid #3b82f6;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .mode-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .controller-mode {
+            background: linear-gradient(45deg, #ef4444, #f59e0b);
+            color: white;
+            animation: pulse 2s infinite;
+        }
+
+        .user-mode {
+            background: linear-gradient(45deg, #10b981, #3b82f6);
+            color: white;
+        }
+
+        .display-mode {
+            background: linear-gradient(45deg, #8b5cf6, #06b6d4);
+            color: white;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .mobile-controls {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 2px solid #e5e7eb;
+            padding: 16px;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+        }
+
+        .display-panel {
+            padding-bottom: 100px;
+        }
+    </style>
+ </head>
+ <body class="min-h-full bg-gradient-to-br from-blue-50 to-indigo-100">
+  <div id="mode-indicator" class="mode-indicator user-mode">
+   📱 USER MODE
+  </div>
+  <div class="w-full max-w-none px-2 sm:px-4 lg:px-6 xl:px-8 2xl:px-12 py-6" id="main-container">
+   <header id="main-header" class="text-center mb-8">
+    <div class="bg-white rounded-xl shadow-lg p-6 mb-4 relative">
+     <div class="absolute top-4 right-4">
+      <button id="nav-toggle-btn" class="bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-lg font-semibold transition-all flex items-center gap-2"> <span>🏠</span> <span class="text-sm">Menu</span> </button>
+     </div>
+     <nav id="navigation-bar" class="absolute top-16 right-4 bg-white rounded-xl shadow-lg p-3 z-50 hidden fade-in">
+      <div class="flex flex-col gap-2 min-w-[150px]">
+       <button id="user-mode-btn" class="nav-btn px-4 py-2 rounded-md font-semibold transition-all flex items-center gap-2 bg-green-500 text-white text-sm"> <span>👤</span> <span>User</span> </button>
+       <button id="controller-mode-btn" class="nav-btn px-4 py-2 rounded-md font-semibold transition-all flex items-center gap-2 text-gray-600 hover:text-gray-800 text-sm"> <span>🎮</span> <span>Controller</span> </button>
+       <button id="display-mode-btn" class="nav-btn px-4 py-2 rounded-md font-semibold transition-all flex items-center gap-2 text-gray-600 hover:text-gray-800 text-sm"> <span>📺</span> <span>Display</span> </button>
+      </div>
+     </nav>
+     <div class="flex items-center justify-center gap-6">
+      <img src="https://logic.gmsbd.com/platform/file_upload/company_details_1_5639_0.jpg" alt="Company Logo" class="h-16 w-auto object-contain rounded-lg shadow-md" onerror="this.style.display='none'; this.alt='Logo failed to load';">
+      <div class="text-left">
+       <h1 id="system-title" class="text-3xl font-bold text-blue-800 mb-1">GMS COMPOSITE KNITTING IND LTD</h1>
+       <p class="text-lg font-semibold text-gray-700">FINISH FABRICS MCD</p>
+      </div>
+     </div>
+    </div>
+   </header>
+   <div id="controller-access" class="bg-white rounded-xl shadow-lg p-6 mb-8 hidden">
+    <h3 class="text-xl font-semibold text-gray-800 mb-4">Controller Access</h3>
+    <div class="space-y-4">
+     <div>
+      <label for="access-code" class="block text-sm font-medium text-gray-700 mb-2">Enter Controller Code</label>
+      <input type="password" id="access-code" class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-red-500 focus:outline-none transition-colors" placeholder="Enter access code">
+     </div>
+     <div class="flex gap-3">
+      <button id="verify-code-btn" class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors"> Verify & Enter Controller Mode </button>
+      <button id="cancel-controller-btn" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors"> Cancel </button>
+     </div>
+    </div>
+   </div>
+   <div id="user-controls" class="bg-white rounded-xl shadow-lg p-6 mb-8">
+    <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
+     <div class="flex-1 max-w-md">
+      <div class="relative">
+       <input type="text" id="search-input" placeholder="Search by buyer or rack location..." class="w-full px-4 py-3 pl-10 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none transition-colors">
+       <svg class="absolute left-3 top-3.5 h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+       </svg>
+      </div>
+     </div>
+     <div class="flex items-center gap-3">
+      <label for="items-per-row" class="text-sm font-medium text-gray-700">Items per row:</label>
+      <select id="items-per-row" class="px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none transition-colors">
+       <option value="auto">Auto</option>
+       <option value="2">2</option>
+       <option value="4">4</option>
+       <option value="6">6</option>
+       <option value="8">8</option>
+       <option value="10">10</option>
+       <option value="12">12</option>
+       <option value="16">16</option>
+       <option value="20">20</option>
+      </select>
+     </div>
+     <button id="add-item-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+      </svg>
+      <span>Add New Item</span>
+     </button>
+    </div>
+    <div class="mt-4 flex justify-center">
+     <div class="bg-gray-50 rounded-lg px-4 py-2">
+      <span class="text-gray-600">Total Items: </span>
+      <span id="total-count" class="font-bold text-blue-600">0</span>
+     </div>
+    </div>
+   </div>
+   <div id="controller-controls" class="bg-red-50 border-2 border-red-200 rounded-xl shadow-lg p-6 mb-8 hidden">
+    <h3 class="text-xl font-semibold text-red-800 mb-4">🎮 Display Controller</h3>
+    <div class="space-y-4">
+     <div>
+      <label for="controller-search" class="block text-sm font-medium text-red-700 mb-2">Control Display Search</label>
+      <input type="text" id="controller-search" class="w-full px-4 py-3 border-2 border-red-300 rounded-lg focus:border-red-500 focus:outline-none transition-colors" placeholder="Search to highlight on display screen...">
+     </div>
+     <div class="flex items-center gap-3">
+      <label for="controller-items-per-row" class="text-sm font-medium text-red-700">Display Items per row:</label>
+      <select id="controller-items-per-row" class="px-3 py-2 border-2 border-red-300 rounded-lg focus:border-red-500 focus:outline-none transition-colors">
+       <option value="auto">Auto</option>
+       <option value="2">2</option>
+       <option value="4">4</option>
+       <option value="6">6</option>
+       <option value="8">8</option>
+       <option value="10">10</option>
+       <option value="12">12</option>
+       <option value="16">16</option>
+       <option value="20">20</option>
+      </select>
+     </div>
+     <div class="flex gap-3">
+      <button id="clear-highlights-btn" class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors"> Clear Highlights </button>
+      <button id="exit-controller-btn" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors"> Exit Controller </button>
+     </div>
+    </div>
+   </div>
+   <div id="add-form" class="bg-white rounded-xl shadow-lg p-6 mb-8 hidden">
+    <h3 id="form-title" class="text-xl font-semibold text-gray-800 mb-4">Add New Inventory Item</h3>
+    <form id="inventory-form" class="space-y-4">
+     <input type="hidden" id="edit-item-id" value="">
+     <div>
+      <label for="item-id" class="block text-sm font-medium text-gray-700 mb-2">Item ID (Optional)</label>
+      <input type="text" id="item-id" class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none transition-colors" placeholder="Enter item ID (optional)">
+     </div>
+     <div>
+      <label for="buyer-name" class="block text-sm font-medium text-gray-700 mb-2">Buyer Name</label>
+      <input type="text" id="buyer-name" required class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none transition-colors" placeholder="Enter buyer name">
+     </div>
+     <div>
+      <label for="rack-location" class="block text-sm font-medium text-gray-700 mb-2">Rack Location</label>
+      <input type="text" id="rack-location" required class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none transition-colors" placeholder="Enter rack location (e.g., A-12, B-05)">
+     </div>
+     <div class="flex gap-3">
+      <button type="submit" id="submit-btn" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2">
+       <div id="submit-spinner" class="loading-spinner hidden"></div>
+       <span id="submit-text">Save Item</span>
+      </button>
+      <button type="button" id="cancel-btn" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors"> Cancel </button>
+     </div>
+    </form>
+   </div>
+   <div id="display-search" class="bg-white rounded-xl shadow-lg p-4 mb-6 hidden">
+    <div class="flex items-center gap-4">
+     <button id="exit-display-btn" class="bg-red-500 hover:bg-red-600 text-white px-4 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2"> <span>🚪</span> <span>Exit Display</span> </button>
+     <div class="flex-1">
+      <div class="relative">
+       <input type="text" id="display-search-input" placeholder="Search items on display..." class="w-full px-4 py-3 pl-10 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none transition-colors text-lg">
+       <svg class="absolute left-3 top-3.5 h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+       </svg>
+      </div>
+     </div>
+     <button id="clear-display-search" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-3 rounded-lg font-semibold transition-colors"> Clear </button>
+    </div>
+   </div>
+   <div class="bg-white rounded-xl shadow-lg p-6 display-panel">
+    <h2 class="text-2xl font-semibold text-gray-800 mb-6">Rack Location</h2>
+    <div id="inventory-grid" class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-12 2xl:grid-cols-16 gap-2 sm:gap-3" style="grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));"></div>
+    <div id="empty-state" class="text-center py-12 text-gray-500">
+     <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2 2v-5m16 0h-2M4 13h2m0 0V9a2 2 0 012-2h2m0 0V6a2 2 0 012-2h2.586a1 1 0 01.707.293l2.414 2.414A1 1 0 0016 7.414V9"></path>
+     </svg>
+     <p class="text-lg">No inventory items yet</p>
+     <p class="text-sm">Add items to get started</p>
+    </div>
+   </div>
+   <div class="text-center mt-8 pb-4">
+    <p class="text-sm text-gray-500 font-medium">Developed by: S@ju. ™ UI</p>
+   </div>
+  </div>
+  <div id="mobile-controls" class="mobile-controls hidden">
+   <div class="flex justify-between items-center">
+    <button id="mobile-search-btn" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold"> 🔍 Search </button>
+    <button id="mobile-add-btn" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-semibold"> ➕ Add Item </button>
+    <button id="mobile-controller-btn" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-semibold"> 🎮 Control </button>
+   </div>
+  </div>
+  <script type="module">
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+          apiKey: "AIzaSyD-ZCeY3hquFT61EqIqbd6HOY8_Jy9_8yQ",
+          authDomain: "finish--fabrics-display.firebaseapp.com",
+          databaseURL: "https://finish--fabrics-display-default-rtdb.firebaseio.com",
+          projectId: "finish--fabrics-display",
+          storageBucket: "finish--fabrics-display.firebasestorage.app",
+          messagingSenderId: "1021673748662",
+          appId: "1:1021673748662:web:1ed85c5d37b376a6100e17",
+          measurementId: "G-MSMQYTSXZ5"
+        };
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        let inventoryData = [];
+        let currentRecordCount = 0;
+        let currentMode = 'user';
+        let controllerActive = false;
+        let highlightedItems = [];
+
+        // Default configuration
+        const defaultConfig = {
+            system_title: "GMS COMPOSITE KNITTING IND LTD",
+            controller_code: "CTRL2024",
+        };
+
+        // Data handler for Firebase
+        function onDataChanged(snapshot) {
+            const data = snapshot.val();
+            const allItems = [];
+            if (data) {
+                for (const key in data) {
+                    allItems.push({ ...data[key], __backendId: key });
+                }
+                inventoryData = allItems.filter(item => !item.control_action);
+                const controlCommands = allItems.filter(item => item.control_action);
+                currentRecordCount = inventoryData.length;
+                processControlCommands(controlCommands);
+            } else {
+                inventoryData = [];
+                currentRecordCount = 0;
+            }
+            renderInventoryGrid();
+            updateTotalCount();
+        }
+
+        // Initialize App
+        async function initializeApp() {
+            console.log('Initializing FIMS app...');
+            try {
+                const inventoryRef = database.ref('inventory');
+                inventoryRef.on('value', onDataChanged);
+
+                // Initialize Element SDK if it exists
+                if (window.elementSdk) {
+                    await window.elementSdk.init({ defaultConfig });
+                }
+
+                setupEventListeners();
+                detectMobileDevice();
+                showMessage("FIMS Mobile Control System initialized!", "success");
+            } catch (error) {
+                console.error("Error initializing app:", error);
+                showMessage("System initialization failed. Please refresh the page.", "error");
+            }
+        }
+
+        function setupEventListeners() {
+            // Navigation toggle button
+            const navToggleBtn = document.getElementById('nav-toggle-btn');
+            if (navToggleBtn) {
+                navToggleBtn.addEventListener('click', () => {
+                    toggleNavigationBar();
+                });
+            }
+
+            // Mode selection buttons
+            document.getElementById('user-mode-btn').addEventListener('click', () => { setMode('user'); hideNavigationBar(); });
+            document.getElementById('controller-mode-btn').addEventListener('click', () => { showControllerAccess(); hideNavigationBar(); });
+            document.getElementById('display-mode-btn').addEventListener('click', () => { setMode('display'); hideNavigationBar(); });
+
+            // Controller access
+            document.getElementById('verify-code-btn').addEventListener('click', verifyControllerCode);
+            document.getElementById('cancel-controller-btn').addEventListener('click', hideControllerAccess);
+
+            // User mode controls
+            document.getElementById('add-item-btn').addEventListener('click', () => toggleAddForm(true));
+            document.getElementById('cancel-btn').addEventListener('click', () => toggleAddForm(false));
+            document.getElementById('inventory-form').addEventListener('submit', handleFormSubmit);
+            document.getElementById('search-input').addEventListener('input', handleUserSearch);
+            document.getElementById('items-per-row').addEventListener('change', updateGridLayout);
+
+            // Display mode search
+            document.getElementById('display-search-input').addEventListener('input', handleDisplaySearch);
+            document.getElementById('clear-display-search').addEventListener('click', clearDisplaySearch);
+            document.getElementById('exit-display-btn').addEventListener('click', () => setMode('user'));
+
+            // Controller mode controls
+            document.getElementById('controller-search').addEventListener('input', handleControllerSearch);
+            document.getElementById('clear-highlights-btn').addEventListener('click', clearHighlights);
+            document.getElementById('exit-controller-btn').addEventListener('click', () => setMode('user'));
+            document.getElementById('controller-items-per-row').addEventListener('change', handleControllerGridChange);
+
+            // Mobile controls
+            document.getElementById('mobile-search-btn').addEventListener('click', () => document.getElementById('search-input').focus());
+            document.getElementById('mobile-add-btn').addEventListener('click', () => toggleAddForm(true));
+            document.getElementById('mobile-controller-btn').addEventListener('click', showControllerAccess);
+        }
+
+        function detectMobileDevice() {
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            if (isMobile) {
+                document.getElementById('mobile-controls').classList.remove('hidden');
+            }
+        }
+
+        function toggleNavigationBar() {
+            const navBar = document.getElementById('navigation-bar');
+            navBar.classList.toggle('hidden');
+        }
+
+        function hideNavigationBar() {
+            document.getElementById('navigation-bar').classList.add('hidden');
+        }
+
+        function handleDisplaySearch() {
+            const searchTerm = document.getElementById('display-search-input').value.toLowerCase().trim();
+            highlightLocalItems(searchTerm);
+        }
+
+        function clearDisplaySearch() {
+            document.getElementById('display-search-input').value = '';
+            highlightLocalItems('');
+        }
+
+        function setMode(mode) {
+            currentMode = mode;
+            
+            document.getElementById('user-controls').classList.add('hidden');
+            document.getElementById('controller-controls').classList.add('hidden');
+            document.getElementById('add-form').classList.add('hidden');
+            document.getElementById('controller-access').classList.add('hidden');
+            document.getElementById('display-search').classList.add('hidden');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('bg-green-500', 'bg-red-500', 'bg-purple-500', 'text-white');
+                btn.classList.add('text-gray-600', 'hover:text-gray-800');
+            });
+            
+            const indicator = document.getElementById('mode-indicator');
+            indicator.className = 'mode-indicator';
+            
+            switch(mode) {
+                case 'user':
+                    document.getElementById('user-controls').classList.remove('hidden');
+                    document.getElementById('main-header').classList.remove('hidden');
+                    document.getElementById('user-mode-btn').classList.add('bg-green-500', 'text-white');
+                    indicator.classList.add('user-mode');
+                    indicator.textContent = '👤 USER MODE';
+                    break;
+                case 'controller':
+                    document.getElementById('controller-controls').classList.remove('hidden');
+                    document.getElementById('main-header').classList.remove('hidden');
+                    document.getElementById('controller-mode-btn').classList.add('bg-red-500', 'text-white');
+                    indicator.classList.add('controller-mode');
+                    indicator.textContent = '🎮 CONTROLLER MODE';
+                    break;
+                case 'display':
+                    document.getElementById('main-header').classList.add('hidden');
+                    document.getElementById('display-search').classList.remove('hidden');
+                    document.getElementById('display-mode-btn').classList.add('bg-purple-500', 'text-white');
+                    indicator.classList.add('display-mode');
+                    indicator.textContent = '📺 DISPLAY MODE';
+                    break;
+            }
+            renderInventoryGrid();
+        }
+
+        function showControllerAccess() {
+            document.getElementById('controller-access').classList.remove('hidden');
+            document.getElementById('access-code').focus();
+        }
+
+        function hideControllerAccess() {
+            document.getElementById('controller-access').classList.add('hidden');
+            document.getElementById('access-code').value = '';
+        }
+
+        async function verifyControllerCode() {
+            const enteredCode = document.getElementById('access-code').value;
+            const correctCode = defaultConfig.controller_code;
+            
+            if (enteredCode === correctCode) {
+                hideControllerAccess();
+                setMode('controller');
+                showMessage("Controller mode activated!", "success");
+            } else {
+                showMessage("Invalid controller code!", "error");
+            }
+        }
+        
+        async function sendControlCommand(command) {
+            try {
+                const controlRef = database.ref('inventory').push();
+                await controlRef.set(command);
+            } catch (error) {
+                console.error("Error sending control command:", error);
+            }
+        }
+
+        async function handleControllerSearch() {
+            const searchTerm = document.getElementById('controller-search').value.toLowerCase().trim();
+            sendControlCommand({ control_action: "search_highlight", search_term: searchTerm });
+        }
+
+        async function handleControllerGridChange() {
+            const selectedValue = document.getElementById('controller-items-per-row').value;
+            sendControlCommand({ control_action: "change_grid_layout", search_term: selectedValue });
+        }
+
+        async function clearHighlights() {
+            document.getElementById('controller-search').value = '';
+            sendControlCommand({ control_action: "clear_highlights", search_term: "" });
+        }
+
+        function processControlCommands(commands) {
+            if (currentMode === 'controller' || commands.length === 0) return;
+            
+            const latestCommand = commands.sort((a,b) => (a.__backendId > b.__backendId) ? -1 : 1)[0];
+
+            if (latestCommand) {
+                if (latestCommand.control_action === "search_highlight") {
+                    highlightLocalItems(latestCommand.search_term, true);
+                } else if (latestCommand.control_action === "clear_highlights") {
+                    highlightLocalItems('', true);
+                } else if (latestCommand.control_action === "change_grid_layout") {
+                    updateDisplayGridLayout(latestCommand.search_term);
+                }
+            }
+        }
+
+        function highlightLocalItems(searchTerm, scroll = false) {
+            const cards = document.querySelectorAll('.inventory-card');
+            let foundCard = null;
+
+            cards.forEach(card => {
+                card.classList.remove('highlighted');
+                if (searchTerm) {
+                    const buyerName = card.dataset.buyer;
+                    const rackLocation = card.dataset.rack;
+                    if (buyerName.includes(searchTerm) || rackLocation.includes(searchTerm)) {
+                        card.classList.add('highlighted');
+                        if (!foundCard) foundCard = card;
+                    }
+                }
+            });
+
+            if (scroll && foundCard) {
+                foundCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+
+        function handleUserSearch() {
+            if (currentMode !== 'user') return;
+            const searchTerm = document.getElementById('search-input').value.toLowerCase().trim();
+            highlightLocalItems(searchTerm, true);
+        }
+
+        function toggleAddForm(show, isEdit = false) {
+            if (currentMode !== 'user') return;
+            
+            const form = document.getElementById('add-form');
+            form.classList.toggle('hidden', !show);
+
+            if (show) {
+                document.getElementById('form-title').textContent = isEdit ? 'Edit Inventory Item' : 'Add New Inventory Item';
+                document.getElementById('submit-text').textContent = isEdit ? 'Update Item' : 'Save Item';
+                if (!isEdit) {
+                    document.getElementById('inventory-form').reset();
+                    document.getElementById('edit-item-id').value = '';
+                }
+                document.getElementById('buyer-name').focus();
+            } else {
+                document.getElementById('inventory-form').reset();
+            }
+        }
+
+        function handleEditItem(itemId) {
+            const item = inventoryData.find(i => i.__backendId === itemId);
+            if (!item) return;
+
+            document.getElementById('edit-item-id').value = itemId;
+            document.getElementById('item-id').value = item.item_id || '';
+            document.getElementById('buyer-name').value = item.buyer_name;
+            document.getElementById('rack-location').value = item.rack_location;
+            toggleAddForm(true, true);
+        }
+
+        async function handleFormSubmit(e) {
+            e.preventDefault();
+            const editItemId = document.getElementById('edit-item-id').value;
+            const isEdit = !!editItemId;
+
+            if (!isEdit && currentRecordCount >= 999) {
+                return showMessage("Maximum limit of 999 items reached.", "error");
+            }
+
+            const submitBtn = document.getElementById('submit-btn');
+            const submitSpinner = document.getElementById('submit-spinner');
+            submitBtn.disabled = true;
+            submitSpinner.classList.remove('hidden');
+
+            const itemData = {
+                item_id: document.getElementById('item-id').value.trim(),
+                buyer_name: document.getElementById('buyer-name').value.trim(),
+                rack_location: document.getElementById('rack-location').value.trim(),
+                last_updated: new Date().toISOString()
+            };
+
+            try {
+                if (isEdit) {
+                    const itemRef = database.ref(`inventory/${editItemId}`);
+                    await itemRef.update(itemData);
+                    showMessage('Item updated successfully!', 'success');
+                } else {
+                    itemData.created_at = new Date().toISOString();
+                    const newItemRef = database.ref('inventory').push();
+                    await newItemRef.set(itemData);
+                    showMessage('Item added successfully!', 'success');
+                }
+                toggleAddForm(false);
+            } catch (error) {
+                console.error("Error saving item:", error);
+                showMessage('Failed to save item. Please try again.', 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitSpinner.classList.add('hidden');
+            }
+        }
+
+        function renderInventoryGrid() {
+            const grid = document.getElementById('inventory-grid');
+            const emptyState = document.getElementById('empty-state');
+            
+            emptyState.classList.toggle('hidden', inventoryData.length > 0);
+            grid.innerHTML = inventoryData
+                .map(item => {
+                    const buyerShort = item.buyer_name.length > 20 ? item.buyer_name.substring(0, 20) + '...' : item.buyer_name;
+                    return `
+                    <div class="inventory-card bg-gradient-to-br from-white to-blue-50 border-2 border-blue-200 rounded-xl p-3 shadow-lg hover:shadow-xl transition-all cursor-pointer" 
+                         data-buyer="${item.buyer_name.toLowerCase()}" 
+                         data-rack="${item.rack_location.toLowerCase()}"
+                         data-id="${item.__backendId}">
+                        <div class="text-center">
+                            <div class="bg-blue-600 text-white rounded-t-lg -mx-3 -mt-3 px-3 py-2 mb-3">
+                                <div class="flex items-center justify-center">
+                                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    <span class="text-xs font-bold">FABRIC TAG</span>
+                                </div>
+                            </div>
+                            <h3 class="font-bold text-gray-800 text-sm mb-3 px-1 leading-tight" title="${item.buyer_name}">${buyerShort}</h3>
+                            <div class="bg-yellow-400 text-black rounded-lg px-3 py-2 mb-2 border-2 border-yellow-500">
+                                <div class="text-xs font-medium text-gray-700">RACK:</div>
+                                <div class="text-lg font-bold">${item.rack_location}</div>
+                            </div>
+                            ${item.item_id ? `<div class="text-xs text-gray-500 mb-2">ID: ${item.item_id}</div>` : ''}
+                            ${currentMode === 'user' ? `
+                            <div class="card-buttons mt-2 flex gap-1 justify-center">
+                                <button class="edit-btn bg-blue-500 hover:bg-blue-600 text-white text-xs px-2 py-1 rounded transition-colors" data-id="${item.__backendId}">✏️ Edit</button>
+                                <button class="delete-btn bg-red-500 hover:bg-red-600 text-white text-xs px-2 py-1 rounded transition-colors" data-id="${item.__backendId}">🗑️ Remove</button>
+                            </div>` : ''}
+                        </div>
+                    </div>`;
+                }).join('');
+
+            if (currentMode === 'user') {
+                grid.querySelectorAll('.edit-btn').forEach(btn => btn.addEventListener('click', e => { e.stopPropagation(); handleEditItem(e.currentTarget.dataset.id); }));
+                grid.querySelectorAll('.delete-btn').forEach(btn => btn.addEventListener('click', e => { e.stopPropagation(); handleDeleteItem(e.currentTarget.dataset.id); }));
+            }
+            updateGridLayout();
+        }
+
+        async function handleDeleteItem(itemId) {
+            if (currentMode !== 'user' || !confirm('Are you sure you want to delete this item?')) return;
+            
+            try {
+                await database.ref(`inventory/${itemId}`).remove();
+                showMessage('Item deleted successfully!', 'success');
+            } catch (error) {
+                console.error("Error deleting item:", error);
+                showMessage('Failed to delete item.', 'error');
+            }
+        }
+
+        function updateTotalCount() {
+            document.getElementById('total-count').textContent = currentRecordCount;
+        }
+
+        function updateGridLayout() {
+            const grid = document.getElementById('inventory-grid');
+            const selectedValue = document.getElementById('items-per-row').value;
+            grid.style.gridTemplateColumns = (selectedValue === 'auto') ? 'repeat(auto-fit, minmax(140px, 1fr))' : `repeat(${selectedValue}, 1fr)`;
+        }
+
+        function updateDisplayGridLayout(gridValue) {
+            const grid = document.getElementById('inventory-grid');
+            grid.style.gridTemplateColumns = (gridValue === 'auto') ? 'repeat(auto-fit, minmax(140px, 1fr))' : `repeat(${gridValue}, 1fr)`;
+            
+            if (currentMode === 'display') {
+                const displaySelect = document.getElementById('items-per-row');
+                if (displaySelect) displaySelect.value = gridValue;
+            }
+        }
+
+        function showMessage(message, type) {
+            const toast = document.createElement('div');
+            toast.className = `fixed top-4 left-1/2 -translate-x-1/2 px-6 py-3 rounded-lg text-white font-semibold z-50 transition-all ${type === 'success' ? 'bg-green-500' : 'bg-red-500'}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        document.addEventListener('DOMContentLoaded', initializeApp);
+  </script>
+ </body>
+</html>
+    
+  </body>
+  
+</html>
