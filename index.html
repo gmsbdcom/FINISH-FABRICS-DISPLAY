@@ -15,53 +15,58 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FIMS Mobile Control System</title>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
-
+  
+  <!-- MODIFIED: Firebase SDKs যুক্ত করা হয়েছে -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  
+  <!-- SDK and TailwindCSS -->
+  <script src="/_sdk/data_sdk.js"></script>
   <script src="/_sdk/element_sdk.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
+  
   <style>
         body {
             box-sizing: border-box;
         }
-
+        
         .inventory-card {
             transition: all 0.3s ease;
             transform: scale(1);
         }
-
+        
         .inventory-card:hover {
             transform: scale(1.02);
             box-shadow: 0 8px 25px rgba(0,0,0,0.15);
         }
-
+        
         .inventory-card:hover .card-buttons {
             opacity: 1;
         }
-
+        
         .card-buttons {
             opacity: 0.7;
             transition: opacity 0.3s ease;
         }
-
+        
         .highlighted {
             animation: highlight 2s ease-in-out infinite;
             border: 4px solid #f59e0b !important;
             box-shadow: 0 0 30px rgba(245, 158, 11, 0.8) !important;
             transform: scale(1.05) !important;
         }
-
+        
         @keyframes highlight {
-            0%, 100% {
+            0%, 100% { 
                 border-color: #f59e0b;
                 box-shadow: 0 0 30px rgba(245, 158, 11, 0.8);
             }
-            50% {
+            50% { 
                 border-color: #ef4444;
                 box-shadow: 0 0 40px rgba(239, 68, 68, 0.9);
             }
         }
-
+        
         .loading-spinner {
             border: 3px solid #f3f4f6;
             border-top: 3px solid #3b82f6;
@@ -70,21 +75,21 @@
             height: 20px;
             animation: spin 1s linear infinite;
         }
-
+        
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-
+        
         .fade-in {
             animation: fadeIn 0.5s ease-in;
         }
-
+        
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
-
+        
         .mode-indicator {
             position: fixed;
             top: 20px;
@@ -95,28 +100,28 @@
             font-weight: bold;
             font-size: 12px;
         }
-
+        
         .controller-mode {
             background: linear-gradient(45deg, #ef4444, #f59e0b);
             color: white;
             animation: pulse 2s infinite;
         }
-
+        
         .user-mode {
             background: linear-gradient(45deg, #10b981, #3b82f6);
             color: white;
         }
-
+        
         .display-mode {
             background: linear-gradient(45deg, #8b5cf6, #06b6d4);
             color: white;
         }
-
+        
         @keyframes pulse {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.7; }
         }
-
+        
         .mobile-controls {
             position: fixed;
             bottom: 0;
@@ -127,31 +132,118 @@
             padding: 16px;
             box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
         }
-
+        
         .display-panel {
             padding-bottom: 100px;
         }
+        
+        @media (min-width: 1920px) {
+            .grid-cols-16 {
+                grid-template-columns: repeat(16, minmax(0, 1fr));
+            }
+        }
+        
+        @media (min-width: 2560px) {
+            .grid-cols-20 {
+                grid-template-columns: repeat(20, minmax(0, 1fr));
+            }
+        }
+        
+        @media (min-width: 3440px) {
+            .grid-cols-24 {
+                grid-template-columns: repeat(24, minmax(0, 1fr));
+            }
+        }
+        
+        @media (max-width: 640px) {
+            .inventory-card {
+                min-height: 140px;
+            }
+        }
+        
+        @media (min-width: 641px) and (max-width: 1024px) {
+            .inventory-card {
+                min-height: 160px;
+            }
+        }
+        
+        @media (min-width: 1025px) {
+            .inventory-card {
+                min-height: 180px;
+            }
+        }
+        
+        @media (min-width: 1920px) {
+            .inventory-card {
+                min-height: 200px;
+            }
+        }
     </style>
+  <style>@view-transition { navigation: auto; }</style>
  </head>
  <body class="min-h-full bg-gradient-to-br from-blue-50 to-indigo-100">
   <div id="mode-indicator" class="mode-indicator user-mode">
    📱 USER MODE
   </div>
-  <div class="w-full max-w-none px-2 sm:px-4 lg:px-6 xl:px-8 2xl:px-12 py-6" id="main-container">
+  <div id="login-screen" class="min-h-full flex items-center justify-center bg-gradient-to-br from-blue-900 to-indigo-900 px-4">
+   <div class="max-w-md w-full bg-white rounded-xl shadow-2xl p-8">
+    <div class="text-center mb-8"><img src="https://logic.gmsbd.com/platform/file_upload/company_details_1_5639_0.jpg" alt="Company Logo" class="h-16 w-auto object-contain rounded-lg shadow-md mx-auto mb-4" onerror="this.style.display='none'; this.alt='Logo failed to load';">
+     <h1 class="text-2xl font-bold text-gray-800 mb-2">FIMS Access Control</h1>
+     <p class="text-gray-600">Enter your credentials to access the system</p>
+    </div>
+    <form id="login-form" class="space-y-6">
+     <div><label for="login-password" class="block text-sm font-medium text-gray-700 mb-2">Password</label> <input type="password" id="login-password" required class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none transition-colors" placeholder="Enter your password">
+     </div><button type="submit" id="login-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2">
+      <div id="login-spinner" class="loading-spinner hidden"></div><span id="login-text">Access System</span> </button>
+    </form>
+    <div class="mt-6 text-center">
+     <div class="text-xs text-gray-500 space-y-1">
+      <p>🔐 <strong>Admin Access:</strong> Full system control + real-time sync</p>
+      <p>👤 <strong>User Access:</strong> Standard inventory management</p>
+     </div>
+    </div>
+   </div>
+  </div>
+  <div class="w-full max-w-none px-2 sm:px-4 lg:px-6 xl:px-8 2xl:px-12 py-6 hidden" id="main-container">
+   <div id="session-info" class="bg-gradient-to-r from-green-500 to-blue-600 text-white rounded-lg p-3 mb-4 flex items-center justify-between">
+    <div class="flex items-center gap-3"><span id="session-icon">👤</span>
+     <div>
+      <div class="font-semibold" id="session-type">
+       User Session
+      </div>
+      <div class="text-xs opacity-90" id="session-id">
+       Session: USER_12345
+      </div>
+     </div>
+    </div><button id="logout-btn" class="bg-white bg-opacity-20 hover:bg-opacity-30 px-4 py-2 rounded-lg font-semibold transition-colors"> 🚪 Logout </button>
+   </div>
+   <div id="admin-sync-status" class="bg-red-50 border-2 border-red-200 rounded-xl p-4 mb-6 hidden">
+    <div class="flex items-center justify-between">
+     <div class="flex items-center gap-3">
+      <div class="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+      <div>
+       <div class="font-semibold text-red-800">
+        🔴 ADMIN SYNC ACTIVE
+       </div>
+       <div class="text-sm text-red-600">
+        All user sessions are synchronized with admin actions
+       </div>
+      </div>
+     </div>
+     <div class="text-xs text-red-500">
+      Connected Users: <span id="connected-users">0</span>
+     </div>
+    </div>
+   </div>
    <header id="main-header" class="text-center mb-8">
     <div class="bg-white rounded-xl shadow-lg p-6 mb-4 relative">
-     <div class="absolute top-4 right-4">
-      <button id="nav-toggle-btn" class="bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-lg font-semibold transition-all flex items-center gap-2"> <span>🏠</span> <span class="text-sm">Menu</span> </button>
+     <div class="absolute top-4 right-4"><button id="nav-toggle-btn" class="bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-lg font-semibold transition-all flex items-center gap-2"> <span>🏠</span> <span class="text-sm">Menu</span> </button>
      </div>
-     <nav id="navigation-bar" class="absolute top-16 right-4 bg-white rounded-xl shadow-lg p-3 z-50 hidden fade-in">
-      <div class="flex flex-col gap-2 min-w-[150px]">
-       <button id="user-mode-btn" class="nav-btn px-4 py-2 rounded-md font-semibold transition-all flex items-center gap-2 bg-green-500 text-white text-sm"> <span>👤</span> <span>User</span> </button>
-       <button id="controller-mode-btn" class="nav-btn px-4 py-2 rounded-md font-semibold transition-all flex items-center gap-2 text-gray-600 hover:text-gray-800 text-sm"> <span>🎮</span> <span>Controller</span> </button>
-       <button id="display-mode-btn" class="nav-btn px-4 py-2 rounded-md font-semibold transition-all flex items-center gap-2 text-gray-600 hover:text-gray-800 text-sm"> <span>📺</span> <span>Display</span> </button>
+     <nav id="navigation-bar" class="absolute top-16 right-4 bg-white rounded-xl shadow-lg p-3 z-50 hidden">
+      <div class="flex flex-col gap-2 min-w-[150px]"><button id="user-mode-btn" class="nav-btn px-4 py-2 rounded-md font-semibold transition-all flex items-center gap-2 bg-green-500 text-white text-sm"> <span>👤</span> <span>User</span> </button> <button id="controller-mode-btn" class="nav-btn px-4 py-2 rounded-md font-semibold transition-all flex items-center gap-2 text-gray-600 hover:text-gray-800 text-sm"> <span>🎮</span> <span>Controller</span> </button> <button id="display-mode-btn" class="nav-btn px-4 py-2 rounded-md font-semibold transition-all flex items-center gap-2 text-gray-600 hover:text-gray-800 text-sm"> <span>📺</span> <span>Display</span> </button>
       </div>
      </nav>
-     <div class="flex items-center justify-center gap-6">
-      <img src="https://logic.gmsbd.com/platform/file_upload/company_details_1_5639_0.jpg" alt="Company Logo" class="h-16 w-auto object-contain rounded-lg shadow-md" onerror="this.style.display='none'; this.alt='Logo failed to load';">
+     <div class="flex items-center justify-center gap-6"><img src="https://logic.gmsbd.com/platform/file_upload/company_details_1_5639_0.jpg" alt="Company Logo" class="h-16 w-auto object-contain rounded-lg shadow-md" onerror="this.style.display='none'; this.alt='Logo failed to load';">
       <div class="text-left">
        <h1 id="system-title" class="text-3xl font-bold text-blue-800 mb-1">GMS COMPOSITE KNITTING IND LTD</h1>
        <p class="text-lg font-semibold text-gray-700">FINISH FABRICS MCD</p>
@@ -162,257 +254,264 @@
    <div id="controller-access" class="bg-white rounded-xl shadow-lg p-6 mb-8 hidden">
     <h3 class="text-xl font-semibold text-gray-800 mb-4">Controller Access</h3>
     <div class="space-y-4">
-     <div>
-      <label for="access-code" class="block text-sm font-medium text-gray-700 mb-2">Enter Controller Code</label>
-      <input type="password" id="access-code" class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-red-500 focus:outline-none transition-colors" placeholder="Enter access code">
+     <div><label for="access-code" class="block text-sm font-medium text-gray-700 mb-2">Enter Controller Code</label> <input type="password" id="access-code" class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-red-500 focus:outline-none transition-colors" placeholder="Enter access code">
      </div>
-     <div class="flex gap-3">
-      <button id="verify-code-btn" class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors"> Verify & Enter Controller Mode </button>
-      <button id="cancel-controller-btn" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors"> Cancel </button>
+     <div class="flex gap-3"><button id="verify-code-btn" class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors"> Verify &amp; Enter Controller Mode </button> <button id="cancel-controller-btn" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors"> Cancel </button>
      </div>
     </div>
    </div>
    <div id="user-controls" class="bg-white rounded-xl shadow-lg p-6 mb-8">
     <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
      <div class="flex-1 max-w-md">
-      <div class="relative">
-       <input type="text" id="search-input" placeholder="Search by buyer or rack location..." class="w-full px-4 py-3 pl-10 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none transition-colors">
-       <svg class="absolute left-3 top-3.5 h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+      <div class="relative"><input type="text" id="search-input" placeholder="Search by buyer or rack location..." class="w-full px-4 py-3 pl-10 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none transition-colors">
+       <svg class="absolute left-3 top-3.5 h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
        </svg>
       </div>
      </div>
-     <div class="flex items-center gap-3">
-      <label for="items-per-row" class="text-sm font-medium text-gray-700">Items per row:</label>
-      <select id="items-per-row" class="px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none transition-colors">
-       <option value="auto">Auto</option>
-       <option value="2">2</option>
-       <option value="4">4</option>
-       <option value="6">6</option>
-       <option value="8">8</option>
-       <option value="10">10</option>
-       <option value="12">12</option>
-       <option value="16">16</option>
-       <option value="20">20</option>
-      </select>
-     </div>
-     <button id="add-item-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-      </svg>
-      <span>Add New Item</span>
-     </button>
+     <div class="flex items-center gap-3"><label for="items-per-row" class="text-sm font-medium text-gray-700">Items per row:</label> <select id="items-per-row" class="px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none transition-colors"> <option value="auto">Auto</option> <option value="2">2</option> <option value="4">4</option> <option value="6">6</option> <option value="8">8</option> <option value="10">10</option> <option value="12">12</option> <option value="16">16</option> <option value="20">20</option> </select>
+     </div> <button id="add-item-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+      </svg><span>Add New Item</span> </button>
     </div>
     <div class="mt-4 flex justify-center">
-     <div class="bg-gray-50 rounded-lg px-4 py-2">
-      <span class="text-gray-600">Total Items: </span>
-      <span id="total-count" class="font-bold text-blue-600">0</span>
+     <div class="bg-gray-50 rounded-lg px-4 py-2"><span class="text-gray-600">Total Items: </span> <span id="total-count" class="font-bold text-blue-600">0</span>
      </div>
     </div>
    </div>
    <div id="controller-controls" class="bg-red-50 border-2 border-red-200 rounded-xl shadow-lg p-6 mb-8 hidden">
     <h3 class="text-xl font-semibold text-red-800 mb-4">🎮 Display Controller</h3>
     <div class="space-y-4">
-     <div>
-      <label for="controller-search" class="block text-sm font-medium text-red-700 mb-2">Control Display Search</label>
-      <input type="text" id="controller-search" class="w-full px-4 py-3 border-2 border-red-300 rounded-lg focus:border-red-500 focus:outline-none transition-colors" placeholder="Search to highlight on display screen...">
+     <div><label for="controller-search" class="block text-sm font-medium text-red-700 mb-2">Control Display Search</label> <input type="text" id="controller-search" class="w-full px-4 py-3 border-2 border-red-300 rounded-lg focus:border-red-500 focus:outline-none transition-colors" placeholder="Search to highlight on display screen...">
      </div>
-     <div class="flex items-center gap-3">
-      <label for="controller-items-per-row" class="text-sm font-medium text-red-700">Display Items per row:</label>
-      <select id="controller-items-per-row" class="px-3 py-2 border-2 border-red-300 rounded-lg focus:border-red-500 focus:outline-none transition-colors">
-       <option value="auto">Auto</option>
-       <option value="2">2</option>
-       <option value="4">4</option>
-       <option value="6">6</option>
-       <option value="8">8</option>
-       <option value="10">10</option>
-       <option value="12">12</option>
-       <option value="16">16</option>
-       <option value="20">20</option>
-      </select>
+     <div class="flex items-center gap-3"><label for="controller-items-per-row" class="text-sm font-medium text-red-700">Display Items per row:</label> <select id="controller-items-per-row" class="px-3 py-2 border-2 border-red-300 rounded-lg focus:border-red-500 focus:outline-none transition-colors"> <option value="auto">Auto</option> <option value="2">2</option> <option value="4">4</option> <option value="6">6</option> <option value="8">8</option> <option value="10">10</option> <option value="12">12</option> <option value="16">16</option> <option value="20">20</option> </select>
      </div>
-     <div class="flex gap-3">
-      <button id="clear-highlights-btn" class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors"> Clear Highlights </button>
-      <button id="exit-controller-btn" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors"> Exit Controller </button>
+     <div class="flex gap-3"><button id="clear-highlights-btn" class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors"> Clear Highlights </button> <button id="exit-controller-btn" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors"> Exit Controller </button>
      </div>
     </div>
    </div>
    <div id="add-form" class="bg-white rounded-xl shadow-lg p-6 mb-8 hidden">
     <h3 id="form-title" class="text-xl font-semibold text-gray-800 mb-4">Add New Inventory Item</h3>
-    <form id="inventory-form" class="space-y-4">
-     <input type="hidden" id="edit-item-id" value="">
-     <div>
-      <label for="item-id" class="block text-sm font-medium text-gray-700 mb-2">Item ID (Optional)</label>
-      <input type="text" id="item-id" class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none transition-colors" placeholder="Enter item ID (optional)">
+    <form id="inventory-form" class="space-y-4"><input type="hidden" id="edit-item-id" value="">
+     <div><label for="item-id" class="block text-sm font-medium text-gray-700 mb-2">Item ID (Optional)</label> <input type="text" id="item-id" class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none transition-colors" placeholder="Enter item ID (optional)">
      </div>
-     <div>
-      <label for="buyer-name" class="block text-sm font-medium text-gray-700 mb-2">Buyer Name</label>
-      <input type="text" id="buyer-name" required class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none transition-colors" placeholder="Enter buyer name">
+     <div><label for="buyer-name" class="block text-sm font-medium text-gray-700 mb-2">Buyer Name</label> <input type="text" id="buyer-name" required class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none transition-colors" placeholder="Enter buyer name">
      </div>
-     <div>
-      <label for="rack-location" class="block text-sm font-medium text-gray-700 mb-2">Rack Location</label>
-      <input type="text" id="rack-location" required class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none transition-colors" placeholder="Enter rack location (e.g., A-12, B-05)">
+     <div><label for="rack-location" class="block text-sm font-medium text-gray-700 mb-2">Rack Location</label> <input type="text" id="rack-location" required class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none transition-colors" placeholder="Enter rack location (e.g., A-12, B-05)">
      </div>
-     <div class="flex gap-3">
-      <button type="submit" id="submit-btn" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2">
-       <div id="submit-spinner" class="loading-spinner hidden"></div>
-       <span id="submit-text">Save Item</span>
-      </button>
-      <button type="button" id="cancel-btn" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors"> Cancel </button>
+     <div class="flex gap-3"><button type="submit" id="submit-btn" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2">
+       <div id="submit-spinner" class="loading-spinner hidden"></div><span id="submit-text">Save Item</span> </button> <button type="button" id="cancel-btn" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors"> Cancel </button>
      </div>
     </form>
    </div>
    <div id="display-search" class="bg-white rounded-xl shadow-lg p-4 mb-6 hidden">
-    <div class="flex items-center gap-4">
-     <button id="exit-display-btn" class="bg-red-500 hover:bg-red-600 text-white px-4 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2"> <span>🚪</span> <span>Exit Display</span> </button>
+    <div class="flex items-center gap-4"> <button id="exit-display-btn" class="bg-red-500 hover:bg-red-600 text-white px-4 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2"> <span>🚪</span> <span>Exit Display</span> </button>
      <div class="flex-1">
-      <div class="relative">
-       <input type="text" id="display-search-input" placeholder="Search items on display..." class="w-full px-4 py-3 pl-10 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none transition-colors text-lg">
-       <svg class="absolute left-3 top-3.5 h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+      <div class="relative"><input type="text" id="display-search-input" placeholder="Search items on display..." class="w-full px-4 py-3 pl-10 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none transition-colors text-lg">
+       <svg class="absolute left-3 top-3.5 h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
        </svg>
       </div>
-     </div>
-     <button id="clear-display-search" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-3 rounded-lg font-semibold transition-colors"> Clear </button>
+     </div><button id="clear-display-search" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-3 rounded-lg font-semibold transition-colors"> Clear </button>
     </div>
    </div>
    <div class="bg-white rounded-xl shadow-lg p-6 display-panel">
     <h2 class="text-2xl font-semibold text-gray-800 mb-6">Rack Location</h2>
-    <div id="inventory-grid" class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-12 2xl:grid-cols-16 gap-2 sm:gap-3" style="grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));"></div>
+    <div id="inventory-grid" class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-12 2xl:grid-cols-16 gap-2 sm:gap-3" style="grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));">
+    </div>
     <div id="empty-state" class="text-center py-12 text-gray-500">
-     <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2 2v-5m16 0h-2M4 13h2m0 0V9a2 2 0 012-2h2m0 0V6a2 2 0 012-2h2.586a1 1 0 01.707.293l2.414 2.414A1 1 0 0016 7.414V9"></path>
+     <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2 2v-5m16 0h-2M4 13h2m0 0V9a2 2 0 012-2h2m0 0V6a2 2 0 012-2h2.586a1 1 0 01.707.293l2.414 2.414A1 1 0 0016 7.414V9"></path>
      </svg>
      <p class="text-lg">No inventory items yet</p>
      <p class="text-sm">Add items to get started</p>
     </div>
    </div>
    <div class="text-center mt-8 pb-4">
-    <p class="text-sm text-gray-500 font-medium">Developed by: S@ju. ™ UI</p>
+    <p class="text-sm text-gray-500 font-medium">Developed by: S@ju. ™ </p>
    </div>
   </div>
   <div id="mobile-controls" class="mobile-controls hidden">
-   <div class="flex justify-between items-center">
-    <button id="mobile-search-btn" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold"> 🔍 Search </button>
-    <button id="mobile-add-btn" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-semibold"> ➕ Add Item </button>
-    <button id="mobile-controller-btn" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-semibold"> 🎮 Control </button>
+   <div class="flex justify-between items-center"><button id="mobile-search-btn" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold"> 🔍 Search </button> <button id="mobile-add-btn" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-semibold"> ➕ Add Item </button> <button id="mobile-controller-btn" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-semibold"> 🎮 Control </button>
    </div>
   </div>
-  <script type="module">
-        // Your web app's Firebase configuration
-        const firebaseConfig = {
-          apiKey: "AIzaSyD-ZCeY3hquFT61EqIqbd6HOY8_Jy9_8yQ",
-          authDomain: "finish--fabrics-display.firebaseapp.com",
-          databaseURL: "https://finish--fabrics-display-default-rtdb.firebaseio.com",
-          projectId: "finish--fabrics-display",
-          storageBucket: "finish--fabrics-display.firebasestorage.app",
-          messagingSenderId: "1021673748662",
-          appId: "1:1021673748662:web:1ed85c5d37b376a6100e17",
-          measurementId: "G-MSMQYTSXZ5"
-        };
+  
+  <script>
+    // MODIFIED: Firebase Initialization
+    const firebaseConfig = {
+      databaseURL: "https://finish--fabrics-display-default-rtdb.firebaseio.com/",
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+    const dbRef = database.ref('inventory'); // Root reference for all data
+  </script>
 
-        // Initialize Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
-
+  <script>
         let inventoryData = [];
         let currentRecordCount = 0;
         let currentMode = 'user';
         let controllerActive = false;
         let highlightedItems = [];
+        let currentSession = null;
+        let isLoggedIn = false;
+        let sessionId = null;
+        let connectedUsers = 0;
+        let isSyncingScroll = false;
 
-        // Default configuration
         const defaultConfig = {
             system_title: "GMS COMPOSITE KNITTING IND LTD",
+            admin_password: "ADMIN2024",
+            user_password: "USER2024",
             controller_code: "CTRL2024",
+            primary_color: "#2563eb",
+            surface_color: "#ffffff",
+            text_color: "#1f2937",
+            accent_color: "#059669",
+            background_color: "#f1f5f9"
+        };
+        
+        // MODIFIED: dataHandler now processes data from Firebase
+        const dataHandler = {
+            onDataChanged(data) {
+                if (!isLoggedIn) return;
+                
+                inventoryData = data.filter(item => !item.control_action && !item.session_type && !item.admin_command);
+                const controlCommands = data.filter(item => item.control_action);
+                const sessionData = data.filter(item => item.session_type);
+                const adminCommands = data.filter(item => item.admin_command);
+                
+                currentRecordCount = inventoryData.length;
+                renderInventoryGrid();
+                updateTotalCount();
+                
+                processControlCommands(controlCommands);
+                processSessionData(sessionData);
+                
+                if (currentSession?.type === 'user' || currentMode === 'display') {
+                    processAdminCommands(adminCommands);
+                }
+                
+                if (currentSession?.type === 'admin') {
+                    updateConnectedUsersCount(sessionData);
+                }
+            }
         };
 
-        // Data handler for Firebase
-        function onDataChanged(snapshot) {
-            const data = snapshot.val();
-            const allItems = [];
-            if (data) {
-                for (const key in data) {
-                    allItems.push({ ...data[key], __backendId: key });
-                }
-                inventoryData = allItems.filter(item => !item.control_action);
-                const controlCommands = allItems.filter(item => item.control_action);
-                currentRecordCount = inventoryData.length;
-                processControlCommands(controlCommands);
-            } else {
-                inventoryData = [];
-                currentRecordCount = 0;
-            }
-            renderInventoryGrid();
-            updateTotalCount();
-        }
-
-        // Initialize App
         async function initializeApp() {
-            console.log('Initializing FIMS app...');
             try {
-                const inventoryRef = database.ref('inventory');
-                inventoryRef.on('value', onDataChanged);
-
-                // Initialize Element SDK if it exists
+                // MODIFIED: Replaced dataSdk.init with Firebase's real-time listener
+                dbRef.on('value', (snapshot) => {
+                    const data = snapshot.val();
+                    const dataArray = [];
+                    if (data) {
+                        for (const key in data) {
+                            dataArray.push({
+                                __backendId: key, // Firebase unique key
+                                ...data[key]
+                            });
+                        }
+                    }
+                    dataHandler.onDataChanged(dataArray);
+                });
+                
                 if (window.elementSdk) {
-                    await window.elementSdk.init({ defaultConfig });
+                    await window.elementSdk.init({
+                        defaultConfig,
+                        onConfigChange: async (config) => {
+                            const titleElement = document.getElementById('system-title');
+                            if (titleElement) {
+                                titleElement.textContent = config.system_title || defaultConfig.system_title;
+                            }
+                            const primaryColor = config.primary_color || defaultConfig.primary_color;
+                            const backgroundColor = config.background_color || defaultConfig.background_color;
+                            document.body.style.background = `linear-gradient(to bottom right, ${backgroundColor}, ${primaryColor}20)`;
+                        },
+                        mapToCapabilities: (config) => ({
+                            recolorables: [
+                                { get: () => config.primary_color || defaultConfig.primary_color, set: (value) => window.elementSdk?.setConfig({ primary_color: value }) },
+                                { get: () => config.surface_color || defaultConfig.surface_color, set: (value) => window.elementSdk?.setConfig({ surface_color: value }) },
+                                { get: () => config.text_color || defaultConfig.text_color, set: (value) => window.elementSdk?.setConfig({ text_color: value }) },
+                                { get: () => config.accent_color || defaultConfig.accent_color, set: (value) => window.elementSdk?.setConfig({ accent_color: value }) },
+                                { get: () => config.background_color || defaultConfig.background_color, set: (value) => window.elementSdk?.setConfig({ background_color: value }) }
+                            ],
+                            borderables: [],
+                            fontEditable: undefined,
+                            fontSizeable: undefined
+                        }),
+                        mapToEditPanelValues: (config) => new Map([
+                            ["system_title", config.system_title || defaultConfig.system_title],
+                            ["controller_code", config.controller_code || defaultConfig.controller_code]
+                        ])
+                    });
                 }
 
                 setupEventListeners();
                 detectMobileDevice();
-                showMessage("FIMS Mobile Control System initialized!", "success");
+                
             } catch (error) {
                 console.error("Error initializing app:", error);
                 showMessage("System initialization failed. Please refresh the page.", "error");
             }
         }
 
-        function setupEventListeners() {
-            // Navigation toggle button
-            const navToggleBtn = document.getElementById('nav-toggle-btn');
-            if (navToggleBtn) {
-                navToggleBtn.addEventListener('click', () => {
-                    toggleNavigationBar();
-                });
+        function throttle(func, limit) {
+            let inThrottle;
+            return function() {
+                const args = arguments;
+                const context = this;
+                if (!inThrottle) {
+                    func.apply(context, args);
+                    inThrottle = true;
+                    setTimeout(() => inThrottle = false, limit);
+                }
             }
+        }
+        
+        function handleAdminScroll() {
+            if (currentSession?.type !== 'admin' || isSyncingScroll) return;
+            const scrollTop = window.scrollY;
+            const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            if (scrollHeight <= 0) return;
+            const scrollPercentage = (scrollTop / scrollHeight) * 100;
+            sendAdminCommand('sync_scroll', scrollPercentage);
+        }
 
-            // Mode selection buttons
-            document.getElementById('user-mode-btn').addEventListener('click', () => { setMode('user'); hideNavigationBar(); });
-            document.getElementById('controller-mode-btn').addEventListener('click', () => { showControllerAccess(); hideNavigationBar(); });
-            document.getElementById('display-mode-btn').addEventListener('click', () => { setMode('display'); hideNavigationBar(); });
+        function handleSyncScroll(scrollPercentage) {
+             if (currentSession?.type === 'admin') return;
+            isSyncingScroll = true;
+            const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const targetY = (scrollPercentage / 100) * scrollHeight;
+            window.scrollTo({ top: targetY, behavior: 'smooth' });
+            setTimeout(() => { isSyncingScroll = false; }, 500);
+        }
 
-            // Controller access
-            document.getElementById('verify-code-btn').addEventListener('click', verifyControllerCode);
-            document.getElementById('cancel-controller-btn').addEventListener('click', hideControllerAccess);
-
-            // User mode controls
-            document.getElementById('add-item-btn').addEventListener('click', () => toggleAddForm(true));
-            document.getElementById('cancel-btn').addEventListener('click', () => toggleAddForm(false));
-            document.getElementById('inventory-form').addEventListener('submit', handleFormSubmit);
-            document.getElementById('search-input').addEventListener('input', handleUserSearch);
-            document.getElementById('items-per-row').addEventListener('change', updateGridLayout);
-
-            // Display mode search
-            document.getElementById('display-search-input').addEventListener('input', handleDisplaySearch);
-            document.getElementById('clear-display-search').addEventListener('click', clearDisplaySearch);
-            document.getElementById('exit-display-btn').addEventListener('click', () => setMode('user'));
-
-            // Controller mode controls
-            document.getElementById('controller-search').addEventListener('input', handleControllerSearch);
-            document.getElementById('clear-highlights-btn').addEventListener('click', clearHighlights);
-            document.getElementById('exit-controller-btn').addEventListener('click', () => setMode('user'));
-            document.getElementById('controller-items-per-row').addEventListener('change', handleControllerGridChange);
-
-            // Mobile controls
-            document.getElementById('mobile-search-btn').addEventListener('click', () => document.getElementById('search-input').focus());
-            document.getElementById('mobile-add-btn').addEventListener('click', () => toggleAddForm(true));
-            document.getElementById('mobile-controller-btn').addEventListener('click', showControllerAccess);
+        function setupEventListeners() {
+            document.getElementById('login-form')?.addEventListener('submit', handleLogin);
+            document.getElementById('logout-btn')?.addEventListener('click', (e) => { e.preventDefault(); handleLogout(); });
+            document.getElementById('nav-toggle-btn')?.addEventListener('click', (e) => { e.preventDefault(); toggleNavigationBar(); });
+            document.getElementById('user-mode-btn')?.addEventListener('click', (e) => { e.preventDefault(); setMode('user'); hideNavigationBar(); });
+            document.getElementById('controller-mode-btn')?.addEventListener('click', (e) => { e.preventDefault(); showControllerAccess(); hideNavigationBar(); });
+            document.getElementById('display-mode-btn')?.addEventListener('click', (e) => { e.preventDefault(); setMode('display'); hideNavigationBar(); });
+            document.getElementById('verify-code-btn')?.addEventListener('click', (e) => { e.preventDefault(); verifyControllerCode(); });
+            document.getElementById('cancel-controller-btn')?.addEventListener('click', (e) => { e.preventDefault(); hideControllerAccess(); });
+            document.getElementById('add-item-btn')?.addEventListener('click', (e) => { e.preventDefault(); toggleAddForm(true); });
+            document.getElementById('cancel-btn')?.addEventListener('click', (e) => { e.preventDefault(); toggleAddForm(false); });
+            document.getElementById('inventory-form')?.addEventListener('submit', handleFormSubmit);
+            document.getElementById('search-input')?.addEventListener('input', handleUserSearch);
+            document.getElementById('items-per-row')?.addEventListener('change', updateGridLayout);
+            document.getElementById('display-search-input')?.addEventListener('input', handleDisplaySearch);
+            document.getElementById('clear-display-search')?.addEventListener('click', (e) => { e.preventDefault(); clearDisplaySearch(); });
+            document.getElementById('exit-display-btn')?.addEventListener('click', (e) => { e.preventDefault(); setMode('user'); });
+            document.getElementById('controller-search')?.addEventListener('input', handleControllerSearch);
+            document.getElementById('clear-highlights-btn')?.addEventListener('click', (e) => { e.preventDefault(); clearHighlights(); });
+            document.getElementById('exit-controller-btn')?.addEventListener('click', (e) => { e.preventDefault(); setMode('user'); });
+            document.getElementById('controller-items-per-row')?.addEventListener('change', handleControllerGridChange);
+            document.getElementById('mobile-search-btn')?.addEventListener('click', (e) => { e.preventDefault(); document.getElementById('search-input').focus(); });
+            document.getElementById('mobile-add-btn')?.addEventListener('click', (e) => { e.preventDefault(); toggleAddForm(true); });
+            document.getElementById('mobile-controller-btn')?.addEventListener('click', (e) => { e.preventDefault(); showControllerAccess(); });
+            window.addEventListener('scroll', throttle(handleAdminScroll, 100));
         }
 
         function detectMobileDevice() {
-            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            if (isMobile) {
+            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
                 document.getElementById('mobile-controls').classList.remove('hidden');
             }
         }
@@ -420,6 +519,7 @@
         function toggleNavigationBar() {
             const navBar = document.getElementById('navigation-bar');
             navBar.classList.toggle('hidden');
+            if (!navBar.classList.contains('hidden')) navBar.classList.add('fade-in');
         }
 
         function hideNavigationBar() {
@@ -428,55 +528,64 @@
 
         function handleDisplaySearch() {
             const searchTerm = document.getElementById('display-search-input').value.toLowerCase().trim();
-            highlightLocalItems(searchTerm);
+            const cards = document.querySelectorAll('.inventory-card');
+            cards.forEach(card => card.classList.remove('highlighted'));
+            if (!searchTerm) return;
+            let foundCard = null;
+            cards.forEach(card => {
+                const buyerName = card.dataset.buyer;
+                const rackLocation = card.dataset.rack;
+                if (buyerName.includes(searchTerm) || rackLocation.includes(searchTerm)) {
+                    if (!foundCard) foundCard = card;
+                    card.classList.add('highlighted');
+                }
+            });
+            if (foundCard) foundCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
 
         function clearDisplaySearch() {
             document.getElementById('display-search-input').value = '';
-            highlightLocalItems('');
+            document.querySelectorAll('.inventory-card').forEach(card => card.classList.remove('highlighted'));
         }
 
-        function setMode(mode) {
+        async function setMode(mode) {
             currentMode = mode;
-            
             document.getElementById('user-controls').classList.add('hidden');
             document.getElementById('controller-controls').classList.add('hidden');
             document.getElementById('add-form').classList.add('hidden');
             document.getElementById('controller-access').classList.add('hidden');
             document.getElementById('display-search').classList.add('hidden');
-            
             document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('bg-green-500', 'bg-red-500', 'bg-purple-500', 'text-white');
-                btn.classList.add('text-gray-600', 'hover:text-gray-800');
+                btn.className = 'nav-btn px-4 py-2 rounded-md font-semibold transition-all flex items-center gap-2 text-gray-600 hover:text-gray-800 text-sm';
             });
-            
             const indicator = document.getElementById('mode-indicator');
             indicator.className = 'mode-indicator';
-            
             switch(mode) {
                 case 'user':
                     document.getElementById('user-controls').classList.remove('hidden');
                     document.getElementById('main-header').classList.remove('hidden');
-                    document.getElementById('user-mode-btn').classList.add('bg-green-500', 'text-white');
+                    document.getElementById('user-mode-btn').className = 'nav-btn px-4 py-2 rounded-md font-semibold transition-all flex items-center gap-2 bg-green-500 text-white text-sm';
                     indicator.classList.add('user-mode');
                     indicator.textContent = '👤 USER MODE';
                     break;
                 case 'controller':
                     document.getElementById('controller-controls').classList.remove('hidden');
                     document.getElementById('main-header').classList.remove('hidden');
-                    document.getElementById('controller-mode-btn').classList.add('bg-red-500', 'text-white');
+                    document.getElementById('controller-mode-btn').className = 'nav-btn px-4 py-2 rounded-md font-semibold transition-all flex items-center gap-2 bg-red-500 text-white text-sm';
                     indicator.classList.add('controller-mode');
                     indicator.textContent = '🎮 CONTROLLER MODE';
+                    controllerActive = true;
                     break;
                 case 'display':
                     document.getElementById('main-header').classList.add('hidden');
                     document.getElementById('display-search').classList.remove('hidden');
-                    document.getElementById('display-mode-btn').classList.add('bg-purple-500', 'text-white');
+                    document.getElementById('display-mode-btn').className = 'nav-btn px-4 py-2 rounded-md font-semibold transition-all flex items-center gap-2 bg-purple-500 text-white text-sm';
                     indicator.classList.add('display-mode');
                     indicator.textContent = '📺 DISPLAY MODE';
                     break;
             }
             renderInventoryGrid();
+            if (currentSession?.type === 'admin') await sendAdminCommand('sync_mode_change', mode);
         }
 
         function showControllerAccess() {
@@ -491,107 +600,132 @@
 
         async function verifyControllerCode() {
             const enteredCode = document.getElementById('access-code').value;
-            const correctCode = defaultConfig.controller_code;
-            
+            const correctCode = (window.elementSdk?.config.controller_code) || defaultConfig.controller_code;
             if (enteredCode === correctCode) {
                 hideControllerAccess();
                 setMode('controller');
                 showMessage("Controller mode activated!", "success");
             } else {
                 showMessage("Invalid controller code!", "error");
+                document.getElementById('access-code').value = '';
             }
         }
         
-        async function sendControlCommand(command) {
-            try {
-                const controlRef = database.ref('inventory').push();
-                await controlRef.set(command);
+        // MODIFIED: Functions below use dbRef.push() to create data in Firebase
+        async function createFirebaseRecord(data) {
+             try {
+                await dbRef.push(data);
+                return { isOk: true };
             } catch (error) {
-                console.error("Error sending control command:", error);
+                console.error("Firebase create error:", error);
+                return { isOk: false, error };
             }
         }
 
         async function handleControllerSearch() {
             const searchTerm = document.getElementById('controller-search').value.toLowerCase().trim();
-            sendControlCommand({ control_action: "search_highlight", search_term: searchTerm });
+            await createFirebaseRecord({
+                control_action: "search_highlight",
+                search_term: searchTerm,
+                controller_id: `CTRL_${Date.now()}`,
+                created_at: new Date().toISOString()
+            });
         }
 
         async function handleControllerGridChange() {
             const selectedValue = document.getElementById('controller-items-per-row').value;
-            sendControlCommand({ control_action: "change_grid_layout", search_term: selectedValue });
+            await createFirebaseRecord({
+                control_action: "change_grid_layout",
+                search_term: selectedValue,
+                controller_id: `CTRL_${Date.now()}`,
+                created_at: new Date().toISOString()
+            });
         }
 
         async function clearHighlights() {
+            await createFirebaseRecord({
+                control_action: "clear_highlights",
+                search_term: "",
+                controller_id: `CTRL_${Date.now()}`,
+                created_at: new Date().toISOString()
+            });
             document.getElementById('controller-search').value = '';
-            sendControlCommand({ control_action: "clear_highlights", search_term: "" });
         }
 
         function processControlCommands(commands) {
-            if (currentMode === 'controller' || commands.length === 0) return;
-            
-            const latestCommand = commands.sort((a,b) => (a.__backendId > b.__backendId) ? -1 : 1)[0];
-
-            if (latestCommand) {
-                if (latestCommand.control_action === "search_highlight") {
-                    highlightLocalItems(latestCommand.search_term, true);
-                } else if (latestCommand.control_action === "clear_highlights") {
-                    highlightLocalItems('', true);
-                } else if (latestCommand.control_action === "change_grid_layout") {
-                    updateDisplayGridLayout(latestCommand.search_term);
-                }
-            }
+            if (currentMode === 'controller' || currentSession?.type === 'admin') return;
+            const latestCommand = commands[commands.length - 1];
+            if (!latestCommand) return;
+            if (latestCommand.control_action === "search_highlight") highlightItemsOnDisplay(latestCommand.search_term);
+            else if (latestCommand.control_action === "clear_highlights") clearDisplayHighlights();
+            else if (latestCommand.control_action === "change_grid_layout") updateDisplayGridLayout(latestCommand.search_term);
         }
 
-        function highlightLocalItems(searchTerm, scroll = false) {
+        function highlightItemsOnDisplay(searchTerm) {
             const cards = document.querySelectorAll('.inventory-card');
+            cards.forEach(card => card.classList.remove('highlighted'));
+            if (!searchTerm) return;
             let foundCard = null;
-
+            highlightedItems = [];
             cards.forEach(card => {
-                card.classList.remove('highlighted');
-                if (searchTerm) {
-                    const buyerName = card.dataset.buyer;
-                    const rackLocation = card.dataset.rack;
-                    if (buyerName.includes(searchTerm) || rackLocation.includes(searchTerm)) {
-                        card.classList.add('highlighted');
-                        if (!foundCard) foundCard = card;
-                    }
+                const buyerName = card.dataset.buyer;
+                const rackLocation = card.dataset.rack;
+                if (buyerName.includes(searchTerm) || rackLocation.includes(searchTerm)) {
+                    card.classList.add('highlighted');
+                    highlightedItems.push(card.dataset.id);
+                    if (!foundCard) foundCard = card;
                 }
             });
-
-            if (scroll && foundCard) {
-                foundCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
+            if (foundCard) foundCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
 
-        function handleUserSearch() {
+        function clearDisplayHighlights() {
+            document.querySelectorAll('.inventory-card').forEach(card => card.classList.remove('highlighted'));
+            highlightedItems = [];
+        }
+
+        async function handleUserSearch() {
             if (currentMode !== 'user') return;
             const searchTerm = document.getElementById('search-input').value.toLowerCase().trim();
-            highlightLocalItems(searchTerm, true);
+            const cards = document.querySelectorAll('.inventory-card');
+            cards.forEach(card => card.classList.remove('highlighted'));
+            if (!searchTerm) {
+                if (currentSession?.type === 'admin') await sendAdminCommand('sync_clear_highlights');
+                return;
+            }
+            let foundCard = null;
+            cards.forEach(card => {
+                const buyerName = card.dataset.buyer;
+                const rackLocation = card.dataset.rack;
+                if (buyerName.includes(searchTerm) || rackLocation.includes(searchTerm)) {
+                    if (!foundCard) foundCard = card;
+                    card.classList.add('highlighted');
+                }
+            });
+            if (foundCard) foundCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            if (currentSession?.type === 'admin') await sendAdminCommand('sync_search', searchTerm);
         }
 
         function toggleAddForm(show, isEdit = false) {
             if (currentMode !== 'user') return;
-            
             const form = document.getElementById('add-form');
-            form.classList.toggle('hidden', !show);
-
             if (show) {
+                form.classList.remove('hidden');
+                form.classList.add('fade-in');
                 document.getElementById('form-title').textContent = isEdit ? 'Edit Inventory Item' : 'Add New Inventory Item';
                 document.getElementById('submit-text').textContent = isEdit ? 'Update Item' : 'Save Item';
-                if (!isEdit) {
-                    document.getElementById('inventory-form').reset();
-                    document.getElementById('edit-item-id').value = '';
-                }
+                if (!isEdit) document.getElementById('edit-item-id').value = '';
                 document.getElementById('buyer-name').focus();
             } else {
+                form.classList.add('hidden');
                 document.getElementById('inventory-form').reset();
+                document.getElementById('edit-item-id').value = '';
             }
         }
 
         function handleEditItem(itemId) {
             const item = inventoryData.find(i => i.__backendId === itemId);
             if (!item) return;
-
             document.getElementById('edit-item-id').value = itemId;
             document.getElementById('item-id').value = item.item_id || '';
             document.getElementById('buyer-name').value = item.buyer_name;
@@ -599,99 +733,223 @@
             toggleAddForm(true, true);
         }
 
+        async function handleLogin(e) {
+            e.preventDefault();
+            const password = document.getElementById('login-password').value;
+            const loginBtn = document.getElementById('login-btn');
+            const loginSpinner = document.getElementById('login-spinner');
+            const loginText = document.getElementById('login-text');
+            loginBtn.disabled = true;
+            loginSpinner.classList.remove('hidden');
+            loginText.textContent = 'Authenticating...';
+            try {
+                const adminPassword = (window.elementSdk?.config.admin_password) || defaultConfig.admin_password;
+                const userPassword = (window.elementSdk?.config.user_password) || defaultConfig.user_password;
+                let sessionType = null;
+                if (password === adminPassword) sessionType = 'admin';
+                else if (password === userPassword) sessionType = 'user';
+                else {
+                    showMessage('Invalid password!', 'error');
+                    return;
+                }
+                sessionId = `${sessionType.toUpperCase()}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+                
+                // MODIFIED: Create session record in Firebase
+                const result = await createFirebaseRecord({
+                    session_type: sessionType,
+                    user_session_id: sessionId,
+                    sync_timestamp: new Date().toISOString(),
+                    created_at: new Date().toISOString()
+                });
+                
+                if (result.isOk) {
+                    currentSession = { type: sessionType, id: sessionId };
+                    isLoggedIn = true;
+                    document.getElementById('login-screen').classList.add('hidden');
+                    document.getElementById('main-container').classList.remove('hidden');
+                    updateSessionInfo();
+                    if (sessionType === 'admin') {
+                        document.getElementById('admin-sync-status').classList.remove('hidden');
+                        showMessage('🔐 Admin access granted!', 'success');
+                    } else {
+                        showMessage('👤 User access granted!', 'success');
+                    }
+                } else {
+                    showMessage('Login failed. Please try again.', 'error');
+                }
+            } finally {
+                loginBtn.disabled = false;
+                loginSpinner.classList.add('hidden');
+                loginText.textContent = 'Access System';
+                document.getElementById('login-password').value = '';
+            }
+        }
+
+        function handleLogout() {
+            isLoggedIn = false;
+            currentSession = null;
+            sessionId = null;
+            document.getElementById('main-container').classList.add('hidden');
+            document.getElementById('login-screen').classList.remove('hidden');
+            setMode('user');
+            document.getElementById('admin-sync-status').classList.add('hidden');
+            showMessage('Logged out successfully!', 'success');
+        }
+
+        function updateSessionInfo() {
+            if (!currentSession) return;
+            const sessionIcon = document.getElementById('session-icon');
+            const sessionType = document.getElementById('session-type');
+            const sessionIdElement = document.getElementById('session-id');
+            const sessionInfo = document.getElementById('session-info');
+            if (currentSession.type === 'admin') {
+                sessionIcon.textContent = '🔐';
+                sessionType.textContent = 'Admin Session';
+                sessionInfo.className = 'bg-gradient-to-r from-red-500 to-orange-600 text-white rounded-lg p-3 mb-4 flex items-center justify-between';
+            } else {
+                sessionIcon.textContent = '👤';
+                sessionType.textContent = 'User Session';
+                sessionInfo.className = 'bg-gradient-to-r from-green-500 to-blue-600 text-white rounded-lg p-3 mb-4 flex items-center justify-between';
+            }
+            sessionIdElement.textContent = `Session: ${currentSession.id}`;
+        }
+
+        function processSessionData(sessionData) {
+            const activeSessions = sessionData.filter(session => (new Date() - new Date(session.created_at)) < 300000);
+            connectedUsers = activeSessions.length;
+        }
+
+        function updateConnectedUsersCount() {
+            const connectedUsersElement = document.getElementById('connected-users');
+            if (connectedUsersElement) connectedUsersElement.textContent = connectedUsers;
+        }
+
+        async function processAdminCommands(adminCommands) {
+            if (currentSession?.type === 'admin') return;
+            const latestCommand = adminCommands[adminCommands.length - 1];
+            if (!latestCommand) return;
+            switch (latestCommand.admin_command) {
+                case 'sync_search':
+                    highlightItemsOnDisplay(latestCommand.search_term || '');
+                    break;
+                case 'sync_grid_layout':
+                    updateDisplayGridLayout(latestCommand.search_term || 'auto');
+                    break;
+                case 'sync_mode_change':
+                    if (latestCommand.search_term && latestCommand.search_term !== currentMode) setMode(latestCommand.search_term);
+                    break;
+                case 'sync_clear_highlights':
+                    clearDisplayHighlights();
+                    break;
+                case 'sync_scroll':
+                    handleSyncScroll(latestCommand.search_term);
+                    break;
+            }
+        }
+
+        async function sendAdminCommand(command, data = '') {
+            if (currentSession?.type !== 'admin') return;
+            await createFirebaseRecord({
+                admin_command: command,
+                search_term: data,
+                user_session_id: sessionId,
+                sync_timestamp: new Date().toISOString(),
+                created_at: new Date().toISOString()
+            });
+        }
+
         async function handleFormSubmit(e) {
             e.preventDefault();
+            if (currentMode !== 'user') return;
             const editItemId = document.getElementById('edit-item-id').value;
             const isEdit = !!editItemId;
-
             if (!isEdit && currentRecordCount >= 999) {
-                return showMessage("Maximum limit of 999 items reached.", "error");
+                showMessage("Maximum limit of 999 items reached.", "error");
+                return;
             }
-
             const submitBtn = document.getElementById('submit-btn');
             const submitSpinner = document.getElementById('submit-spinner');
+            const submitText = document.getElementById('submit-text');
             submitBtn.disabled = true;
             submitSpinner.classList.remove('hidden');
-
-            const itemData = {
-                item_id: document.getElementById('item-id').value.trim(),
-                buyer_name: document.getElementById('buyer-name').value.trim(),
-                rack_location: document.getElementById('rack-location').value.trim(),
-                last_updated: new Date().toISOString()
-            };
-
+            submitText.textContent = isEdit ? 'Updating...' : 'Saving...';
             try {
+                const itemId = document.getElementById('item-id').value.trim();
+                const buyerName = document.getElementById('buyer-name').value.trim();
+                const rackLocation = document.getElementById('rack-location').value.trim();
                 if (isEdit) {
-                    const itemRef = database.ref(`inventory/${editItemId}`);
-                    await itemRef.update(itemData);
+                    // MODIFIED: Update existing item in Firebase
+                    const itemToUpdate = { item_id: itemId, buyer_name: buyerName, rack_location: rackLocation, last_updated: new Date().toISOString() };
+                    await database.ref('inventory/' + editItemId).update(itemToUpdate);
                     showMessage('Item updated successfully!', 'success');
                 } else {
-                    itemData.created_at = new Date().toISOString();
-                    const newItemRef = database.ref('inventory').push();
-                    await newItemRef.set(itemData);
+                    // MODIFIED: Create new item in Firebase
+                    const newItem = { item_id: itemId || `ITEM-${Date.now()}`, buyer_name: buyerName, rack_location: rackLocation, last_updated: new Date().toISOString(), created_at: new Date().toISOString() };
+                    await createFirebaseRecord(newItem);
                     showMessage('Item added successfully!', 'success');
                 }
                 toggleAddForm(false);
-            } catch (error) {
-                console.error("Error saving item:", error);
-                showMessage('Failed to save item. Please try again.', 'error');
+            } catch(error) {
+                showMessage('Failed to save item. ' + error.message, 'error');
             } finally {
                 submitBtn.disabled = false;
                 submitSpinner.classList.add('hidden');
+                submitText.textContent = isEdit ? 'Update Item' : 'Save Item';
             }
         }
 
         function renderInventoryGrid() {
             const grid = document.getElementById('inventory-grid');
             const emptyState = document.getElementById('empty-state');
-            
-            emptyState.classList.toggle('hidden', inventoryData.length > 0);
-            grid.innerHTML = inventoryData
-                .map(item => {
-                    const buyerShort = item.buyer_name.length > 20 ? item.buyer_name.substring(0, 20) + '...' : item.buyer_name;
-                    return `
-                    <div class="inventory-card bg-gradient-to-br from-white to-blue-50 border-2 border-blue-200 rounded-xl p-3 shadow-lg hover:shadow-xl transition-all cursor-pointer" 
-                         data-buyer="${item.buyer_name.toLowerCase()}" 
-                         data-rack="${item.rack_location.toLowerCase()}"
-                         data-id="${item.__backendId}">
-                        <div class="text-center">
-                            <div class="bg-blue-600 text-white rounded-t-lg -mx-3 -mt-3 px-3 py-2 mb-3">
-                                <div class="flex items-center justify-center">
-                                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                    <span class="text-xs font-bold">FABRIC TAG</span>
-                                </div>
+            if (inventoryData.length === 0) {
+                grid.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+            emptyState.classList.add('hidden');
+            grid.innerHTML = inventoryData.map(item => `
+                <div class="inventory-card bg-gradient-to-br from-white to-blue-50 border-2 border-blue-200 rounded-xl p-3 shadow-lg hover:shadow-xl transition-all cursor-pointer" 
+                     data-buyer="${item.buyer_name.toLowerCase()}" 
+                     data-rack="${item.rack_location.toLowerCase()}"
+                     data-id="${item.__backendId}">
+                    <div class="text-center">
+                        <div class="bg-blue-600 text-white rounded-t-lg -mx-3 -mt-3 px-3 py-2 mb-3">
+                            <div class="flex items-center justify-center">
+                                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                <span class="text-xs font-bold">FABRIC TAG</span>
                             </div>
-                            <h3 class="font-bold text-gray-800 text-sm mb-3 px-1 leading-tight" title="${item.buyer_name}">${buyerShort}</h3>
-                            <div class="bg-yellow-400 text-black rounded-lg px-3 py-2 mb-2 border-2 border-yellow-500">
-                                <div class="text-xs font-medium text-gray-700">RACK:</div>
-                                <div class="text-lg font-bold">${item.rack_location}</div>
-                            </div>
-                            ${item.item_id ? `<div class="text-xs text-gray-500 mb-2">ID: ${item.item_id}</div>` : ''}
-                            ${currentMode === 'user' ? `
-                            <div class="card-buttons mt-2 flex gap-1 justify-center">
-                                <button class="edit-btn bg-blue-500 hover:bg-blue-600 text-white text-xs px-2 py-1 rounded transition-colors" data-id="${item.__backendId}">✏️ Edit</button>
-                                <button class="delete-btn bg-red-500 hover:bg-red-600 text-white text-xs px-2 py-1 rounded transition-colors" data-id="${item.__backendId}">🗑️ Remove</button>
-                            </div>` : ''}
                         </div>
-                    </div>`;
-                }).join('');
+                        <h3 class="font-bold text-gray-800 text-sm mb-3 px-1 leading-tight" title="${item.buyer_name}">
+                            ${item.buyer_name.length > 20 ? item.buyer_name.substring(0, 20) + '...' : item.buyer_name}
+                        </h3>
+                        <div class="bg-yellow-400 text-black rounded-lg px-3 py-2 mb-2 border-2 border-yellow-500">
+                            <div class="text-xs font-medium text-gray-700">RACK:</div>
+                            <div class="text-lg font-bold">${item.rack_location}</div>
+                        </div>
+                        ${item.item_id ? `<div class="text-xs text-gray-500 mb-2">ID: ${item.item_id}</div>` : ''}
+                        ${currentMode === 'user' ? `
+                        <div class="card-buttons mt-2 flex gap-1 justify-center">
+                            <button class="edit-btn bg-blue-500 hover:bg-blue-600 text-white text-xs px-2 py-1 rounded transition-colors" data-id="${item.__backendId}">✏️ Edit</button>
+                            <button class="delete-btn bg-red-500 hover:bg-red-600 text-white text-xs px-2 py-1 rounded transition-colors" data-id="${item.__backendId}">🗑️ Remove</button>
+                        </div>` : ''}
+                    </div>
+                </div>`).join('');
 
             if (currentMode === 'user') {
-                grid.querySelectorAll('.edit-btn').forEach(btn => btn.addEventListener('click', e => { e.stopPropagation(); handleEditItem(e.currentTarget.dataset.id); }));
-                grid.querySelectorAll('.delete-btn').forEach(btn => btn.addEventListener('click', e => { e.stopPropagation(); handleDeleteItem(e.currentTarget.dataset.id); }));
+                grid.querySelectorAll('.edit-btn').forEach(btn => btn.addEventListener('click', (e) => { e.stopPropagation(); handleEditItem(btn.dataset.id); }));
+                grid.querySelectorAll('.delete-btn').forEach(btn => btn.addEventListener('click', (e) => { e.stopPropagation(); handleDeleteItem(btn.dataset.id); }));
             }
             updateGridLayout();
         }
 
         async function handleDeleteItem(itemId) {
-            if (currentMode !== 'user' || !confirm('Are you sure you want to delete this item?')) return;
-            
+            if (currentMode !== 'user' || !itemId) return;
             try {
-                await database.ref(`inventory/${itemId}`).remove();
+                // MODIFIED: Delete item from Firebase
+                await database.ref('inventory/' + itemId).remove();
                 showMessage('Item deleted successfully!', 'success');
             } catch (error) {
-                console.error("Error deleting item:", error);
-                showMessage('Failed to delete item.', 'error');
+                showMessage('Failed to delete item. ' + error.message, 'error');
             }
         }
 
@@ -699,32 +957,49 @@
             document.getElementById('total-count').textContent = currentRecordCount;
         }
 
-        function updateGridLayout() {
+        async function updateGridLayout() {
             const grid = document.getElementById('inventory-grid');
             const selectedValue = document.getElementById('items-per-row').value;
-            grid.style.gridTemplateColumns = (selectedValue === 'auto') ? 'repeat(auto-fit, minmax(140px, 1fr))' : `repeat(${selectedValue}, 1fr)`;
+            grid.className = grid.className.replace(/grid-cols-\d+/g, '');
+            if (selectedValue === 'auto') {
+                grid.style.gridTemplateColumns = 'repeat(auto-fit, minmax(140px, 1fr))';
+                grid.className = 'grid gap-2 sm:gap-3';
+            } else {
+                grid.style.gridTemplateColumns = `repeat(${parseInt(selectedValue)}, 1fr)`;
+                grid.className = 'grid gap-2 sm:gap-3';
+            }
+            if (currentSession?.type === 'admin') await sendAdminCommand('sync_grid_layout', selectedValue);
         }
 
         function updateDisplayGridLayout(gridValue) {
             const grid = document.getElementById('inventory-grid');
-            grid.style.gridTemplateColumns = (gridValue === 'auto') ? 'repeat(auto-fit, minmax(140px, 1fr))' : `repeat(${gridValue}, 1fr)`;
-            
-            if (currentMode === 'display') {
-                const displaySelect = document.getElementById('items-per-row');
-                if (displaySelect) displaySelect.value = gridValue;
+            grid.className = grid.className.replace(/grid-cols-\d+/g, '');
+            if (gridValue === 'auto') {
+                grid.style.gridTemplateColumns = 'repeat(auto-fit, minmax(140px, 1fr))';
+                grid.className = 'grid gap-2 sm:gap-3';
+            } else {
+                grid.style.gridTemplateColumns = `repeat(${parseInt(gridValue)}, 1fr)`;
+                grid.className = 'grid gap-2 sm:gap-3';
+            }
+            if (currentMode === 'display' || currentSession?.type === 'user') {
+                const selectElement = document.getElementById('items-per-row');
+                if (selectElement) selectElement.value = gridValue;
             }
         }
 
         function showMessage(message, type) {
             const toast = document.createElement('div');
-            toast.className = `fixed top-4 left-1/2 -translate-x-1/2 px-6 py-3 rounded-lg text-white font-semibold z-50 transition-all ${type === 'success' ? 'bg-green-500' : 'bg-red-500'}`;
+            toast.className = `fixed top-4 left-4 px-6 py-3 rounded-lg text-white font-semibold z-50 transition-all ${type === 'success' ? 'bg-green-500' : 'bg-red-500'}`;
             toast.textContent = message;
             document.body.appendChild(toast);
             setTimeout(() => toast.remove(), 3000);
         }
 
         document.addEventListener('DOMContentLoaded', initializeApp);
-  </script>
+        if (document.readyState !== 'loading') {
+            initializeApp();
+        }
+    </script>
  </body>
 </html>
     
