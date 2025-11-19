@@ -3,7 +3,7 @@
 
   <head>
     <meta charset="UTF-8">
-    <title>FINISH FABRICS MCD  RACK DISPLAY</title>
+    <title>LAST DISPLAY WITH REMORT</title>
     
 
   </head>
@@ -14,2145 +14,1424 @@
  <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FIMS Mobile Control System</title>
+  <title>Buyer Display Dashboard</title>
   <script src="/_sdk/element_sdk.js"></script>
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js"></script>
-  <script src="https://cdn.tailwindcss.com"></script>
   <style>
-        body {
-            box-sizing: border-box;
-            font-family: 'Arial', sans-serif;
-        }
+body {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(135deg, #001f3f 0%, #003d7a 50%, #005ca9 100%);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  height: 100%;
+  overflow: hidden;
+}
 
-        .inventory-card {
-            transition: all 0.3s ease;
-            transform: scale(1);
-        }
+html {
+  height: 100%;
+}
 
-        .inventory-card:hover {
-            transform: scale(1.02);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-        }
+* {
+  box-sizing: border-box;
+}
 
-        .inventory-card:hover .card-buttons {
-            opacity: 1;
-        }
+/* TOP NAV BAR */
+.top-bar {
+  width: 100%;
+  height: 140px;
+  background: linear-gradient(135deg, #0a4275 0%, #0f5fae 50%, #1a7fd6 100%);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 50px;
+  box-sizing: border-box;
+  box-shadow: 0 6px 30px rgba(0, 0, 0, 0.4);
+  position: relative;
+  z-index: 100;
+  border-bottom: 5px solid #ffc264;
+}
 
-        .card-buttons {
-            opacity: 0.7;
-            transition: opacity 0.3s ease;
-        }
+.company-section {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}
 
-        .highlighted {
-            animation: highlight 2s ease-in-out infinite;
-            border: 4px solid #f59e0b !important;
-            box-shadow: 0 0 30px rgba(245, 158, 11, 0.8) !important;
-            transform: scale(1.05) !important;
-        }
+.home-btn {
+  cursor: pointer;
+  transition: transform 0.3s;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+}
 
-        @keyframes highlight {
-            0%, 100% { 
-                border-color: #f59e0b;
-                box-shadow: 0 0 30px rgba(245, 158, 11, 0.8);
-            }
-            50% { 
-                border-color: #fbbf24;
-                box-shadow: 0 0 40px rgba(251, 191, 36, 1);
-            }
-        }
+.home-btn:hover {
+  transform: scale(1.08) rotate(5deg);
+}
 
-        .loading-spinner {
-            border: 3px solid #f3f4f6;
-            border-top: 3px solid #3b82f6;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            animation: spin 1s linear infinite;
-        }
+.home-btn img {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  border-radius: 15px;
+  border: 4px solid #ffc264;
+  background: white;
+  padding: 5px;
+}
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
+.company-info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
 
-        .fade-in {
-            animation: fadeIn 0.5s ease-in;
-        }
+.company-name {
+  font-size: 36px;
+  font-weight: 900;
+  color: white;
+  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
+  letter-spacing: 1px;
+}
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+.company-tagline {
+  font-size: 18px;
+  color: #ffc264;
+  font-weight: 600;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+}
 
-        .mode-indicator {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            z-index: 1000;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-weight: bold;
-            font-size: 12px;
-            color: white;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        }
+.search-section {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  max-width: 700px;
+  margin: 0 40px;
+}
 
-        .user-mode { background: linear-gradient(135deg, #10b981, #059669); }
-        .controller-mode { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
-        .display-mode { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+.search-box {
+  width: 100%;
+  height: 70px;
+  background: white;
+  border-radius: 50px;
+  display: flex;
+  align-items: center;
+  padding: 0 30px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  transition: all 0.3s;
+  border: 4px solid #ffc264;
+}
 
-        .mobile-controls {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: white;
-            border-top: 2px solid #e5e7eb;
-            padding: 16px;
-            box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
-            z-index: 100;
-        }
+.search-box:focus-within {
+  box-shadow: 0 6px 30px rgba(255, 194, 100, 0.5);
+  transform: scale(1.02);
+}
 
-        .display-panel {
-            padding-bottom: 120px;
-        }
+.search-box input {
+  width: 100%;
+  border: none;
+  outline: none;
+  font-size: 22px;
+  padding: 0 15px;
+  font-weight: 500;
+}
 
-        .admin-locked {
-            pointer-events: none;
-            opacity: 0.6;
-            filter: grayscale(0.3);
-        }
+.search-icon, .mic-icon {
+  font-size: 28px;
+  cursor: pointer;
+  transition: transform 0.2s;
+  user-select: none;
+}
 
-        .pulse-animation {
-            animation: pulse 2s infinite;
-        }
+.search-icon:hover, .mic-icon:hover {
+  transform: scale(1.2);
+}
 
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
+.time-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 5px;
+}
 
-        .led-active-label {
-            background: linear-gradient(135deg, #ff6b35, #f7931e, #ffcc02);
-            color: white;
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 900;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            box-shadow: 
-                0 0 20px rgba(255, 107, 53, 0.7),
-                0 0 40px rgba(247, 147, 30, 0.5),
-                0 0 60px rgba(255, 204, 2, 0.3),
-                0 4px 15px rgba(0, 0, 0, 0.2);
-            border: 2px solid rgba(255, 255, 255, 0.4);
-            animation: ledGlow 2.5s ease-in-out infinite alternate;
-            text-shadow: 
-                0 0 10px rgba(255, 255, 255, 0.8),
-                0 0 20px rgba(255, 204, 2, 0.7);
-            position: relative;
-            overflow: hidden;
-            transform: scale(1);
-            transition: transform 0.3s ease;
-        }
+.current-time {
+  font-size: 32px;
+  font-weight: 900;
+  color: #ffc264;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  font-family: 'Courier New', monospace;
+}
 
-        .led-active-label:hover {
-            transform: scale(1.05);
-        }
+.current-date {
+  font-size: 18px;
+  color: white;
+  font-weight: 600;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+}
 
-        .led-active-label::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
-            animation: ledShine 3.5s infinite;
-        }
+/* STATS BAR */
+.stats-bar {
+  width: 100%;
+  height: 80px;
+  background: linear-gradient(135deg, #ffc264 0%, #ffb03d 100%);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0 50px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  border-bottom: 3px solid #1a1a1a;
+}
 
-        .led-active-label::after {
-            content: '';
-            position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            background: linear-gradient(45deg, #ff6b35, #f7931e, #ffcc02, #ff6b35);
-            border-radius: 32px;
-            z-index: -1;
-            animation: borderRotate 4s linear infinite;
-        }
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
 
-        @keyframes ledGlow {
-            0% {
-                box-shadow: 
-                    0 0 25px rgba(255, 107, 53, 0.8),
-                    0 0 50px rgba(247, 147, 30, 0.6),
-                    0 0 75px rgba(255, 204, 2, 0.4),
-                    0 6px 20px rgba(0, 0, 0, 0.3);
-            }
-            100% {
-                box-shadow: 
-                    0 0 35px rgba(255, 107, 53, 1),
-                    0 0 70px rgba(247, 147, 30, 0.8),
-                    0 0 100px rgba(255, 204, 2, 0.6),
-                    0 8px 25px rgba(0, 0, 0, 0.4);
-            }
-        }
+.stat-icon {
+  font-size: 40px;
+  filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.3));
+}
 
-        @keyframes borderRotate {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
+.stat-content {
+  display: flex;
+  flex-direction: column;
+}
 
-        @keyframes ledShine {
-            0% { left: -100%; }
-            50% { left: 100%; }
-            100% { left: 100%; }
-        }
+.stat-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1a1a1a;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
 
-        /* Google Maps Style Location Indicators */
-        .location-indicator {
-            animation: locationAppear 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
+.stat-value {
+  font-size: 28px;
+  font-weight: 900;
+  color: #0f5fae;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
 
-        .location-pin {
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+/* ADD BUTTON */
+.add-btn {
+  position: fixed;
+  bottom: 40px;
+  right: 40px;
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #ffc264 0%, #ffb03d 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 45px;
+  color: #1a1a1a;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+  transition: all 0.3s ease;
+  z-index: 1500;
+  border: 4px solid #1a1a1a;
+  user-select: none;
+}
 
-        .pin-head {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, #ea4335, #d33b2c);
-            border-radius: 50% 50% 50% 0;
-            transform: rotate(-45deg);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 
-                0 8px 20px rgba(234, 67, 53, 0.4),
-                0 4px 12px rgba(0, 0, 0, 0.2),
-                inset 0 2px 4px rgba(255, 255, 255, 0.3);
-            border: 3px solid #ffffff;
-            animation: pinBounce 2s ease-in-out infinite;
-        }
+.add-btn:hover {
+  transform: scale(1.15) rotate(90deg);
+  box-shadow: 0 8px 30px rgba(255, 194, 100, 0.6);
+}
 
-        .pin-icon {
-            transform: rotate(45deg);
-            font-size: 18px;
-            color: white;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-        }
+.add-btn:active {
+  transform: scale(1.05) rotate(90deg);
+}
 
-        .pin-point {
-            width: 6px;
-            height: 6px;
-            background: #ea4335;
-            border-radius: 50%;
-            margin-top: -3px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-        }
+/* MODAL */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 2000;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(5px);
+}
 
-        .location-pulse {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 60px;
-            height: 60px;
-            border: 3px solid #ea4335;
-            border-radius: 50%;
-            opacity: 0.6;
-            animation: locationPulse 2s ease-out infinite;
-        }
+.modal.active {
+  display: flex;
+}
 
-        .path-indicator {
-            animation: pathAppear 0.4s ease-out;
-        }
+.modal-content {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f8f8 100%);
+  border-radius: 30px;
+  padding: 40px;
+  width: 90%;
+  max-width: 600px;
+  box-shadow: 0 10px 50px rgba(0, 0, 0, 0.5);
+  border: 5px solid #ffc264;
+}
 
-        .path-marker {
-            width: 32px;
-            height: 32px;
-            background: linear-gradient(135deg, #4285f4, #1a73e8);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 
-                0 6px 16px rgba(66, 133, 244, 0.4),
-                0 2px 8px rgba(0, 0, 0, 0.2);
-            border: 2px solid #ffffff;
-            animation: pathBounce 1.5s ease-in-out infinite;
-        }
+.modal-header {
+  font-size: 32px;
+  font-weight: 900;
+  color: #0f5fae;
+  margin-bottom: 30px;
+  text-align: center;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
 
-        .path-number {
-            color: white;
-            font-weight: bold;
-            font-size: 14px;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-        }
+.form-group {
+  margin-bottom: 25px;
+}
 
-        .path-pulse {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 48px;
-            height: 48px;
-            border: 2px solid #4285f4;
-            border-radius: 50%;
-            opacity: 0.5;
-            animation: pathPulse 1.8s ease-out infinite;
-        }
+.form-group label {
+  display: block;
+  font-size: 16px;
+  font-weight: 800;
+  color: #1a1a1a;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
 
-        @keyframes locationAppear {
-            0% {
-                transform: translateY(-100px) scale(0.3);
-                opacity: 0;
-            }
-            50% {
-                transform: translateY(10px) scale(1.1);
-                opacity: 0.8;
-            }
-            100% {
-                transform: translateY(0) scale(1);
-                opacity: 1;
-            }
-        }
+.form-group input {
+  width: 100%;
+  padding: 18px;
+  border: 3px solid #ddd;
+  border-radius: 15px;
+  font-size: 20px;
+  box-sizing: border-box;
+  transition: all 0.3s;
+  font-weight: 600;
+}
 
-        @keyframes pinBounce {
-            0%, 100% {
-                transform: rotate(-45deg) translateY(0);
-            }
-            50% {
-                transform: rotate(-45deg) translateY(-8px);
-            }
-        }
+.form-group input:focus {
+  outline: none;
+  border-color: #0f5fae;
+  box-shadow: 0 0 15px rgba(15, 95, 174, 0.3);
+}
 
-        @keyframes locationPulse {
-            0% {
-                transform: translate(-50%, -50%) scale(0.8);
-                opacity: 0.8;
-            }
-            100% {
-                transform: translate(-50%, -50%) scale(2);
-                opacity: 0;
-            }
-        }
+.modal-buttons {
+  display: flex;
+  gap: 15px;
+  margin-top: 30px;
+}
 
-        @keyframes pathAppear {
-            0% {
-                transform: scale(0) rotate(180deg);
-                opacity: 0;
-            }
-            100% {
-                transform: scale(1) rotate(0deg);
-                opacity: 1;
-            }
-        }
+.modal-btn {
+  flex: 1;
+  padding: 18px;
+  border: none;
+  border-radius: 15px;
+  font-size: 20px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
 
-        @keyframes pathBounce {
-            0%, 100% {
-                transform: translateY(0) scale(1);
-            }
-            50% {
-                transform: translateY(-4px) scale(1.05);
-            }
-        }
+.modal-btn-primary {
+  background: linear-gradient(135deg, #0f5fae 0%, #1a7fd6 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(15, 95, 174, 0.4);
+}
 
-        @keyframes pathPulse {
-            0% {
-                transform: translate(-50%, -50%) scale(0.9);
-                opacity: 0.6;
-            }
-            100% {
-                transform: translate(-50%, -50%) scale(1.8);
-                opacity: 0;
-            }
-        }
-    </style>
+.modal-btn-primary:hover:not(:disabled) {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(15, 95, 174, 0.6);
+}
+
+.modal-btn-primary:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.modal-btn-secondary {
+  background: #f2dfc9;
+  color: #1a1a1a;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.modal-btn-secondary:hover {
+  background: #e5d2b5;
+  transform: translateY(-3px);
+}
+
+/* CARD GRID CONTAINER */
+.grid-container {
+  width: 100%;
+  height: calc(100% - 220px);
+  overflow: hidden;
+  position: relative;
+}
+
+.grid-wrapper {
+  width: 100%;
+  transition: transform 1.2s ease-in-out;
+}
+
+/* CARD GRID */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 30px;
+  padding: 40px 50px;
+  margin: 0 auto;
+}
+
+/* EACH CARD */
+.card {
+  background: linear-gradient(135deg, #ffc264 0%, #ffd585 100%);
+  border: 5px solid #1a1a1a;
+  border-radius: 25px;
+  padding: 30px;
+  box-sizing: border-box;
+  min-height: 340px;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  position: relative;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+}
+
+.card:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 15px 40px rgba(255, 194, 100, 0.5);
+  border-color: #0f5fae;
+}
+
+.card.jump {
+  animation: jumpAnimation 0.8s ease;
+}
+
+@keyframes jumpAnimation {
+  0%, 100% { transform: translateY(0) scale(1); }
+  25% { transform: translateY(-20px) scale(1.03); }
+  50% { transform: translateY(-8px) scale(1.01); }
+  75% { transform: translateY(-15px) scale(1.02); }
+}
+
+.card-actions {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  display: none;
+  gap: 8px;
+}
+
+.card:hover .card-actions {
+  display: flex;
+}
+
+.action-btn {
+  width: 45px;
+  height: 45px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+}
+
+.edit-btn {
+  background: linear-gradient(135deg, #0f5fae 0%, #1a7fd6 100%);
+  color: white;
+}
+
+.edit-btn:hover {
+  background: linear-gradient(135deg, #094a8f 0%, #0f5fae 100%);
+  transform: scale(1.15) rotate(10deg);
+}
+
+.delete-btn {
+  background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+  color: white;
+}
+
+.delete-btn:hover {
+  background: linear-gradient(135deg, #b91c1c 0%, #dc2626 100%);
+  transform: scale(1.15) rotate(-10deg);
+}
+
+.status-indicator {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: white;
+  border: 5px solid #22c55e;
+  display: inline-block;
+  margin-bottom: 15px;
+  box-shadow: 0 3px 10px rgba(34, 197, 94, 0.5);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 3px 10px rgba(34, 197, 94, 0.5); }
+  50% { box-shadow: 0 3px 20px rgba(34, 197, 94, 0.8); }
+}
+
+.label {
+  font-size: 14px;
+  font-weight: 900;
+  color: #1a1a1a;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.value {
+  width: 100%;
+  background: white;
+  border-radius: 15px;
+  padding: 15px;
+  font-size: 20px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 18px;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.15);
+  border: 2px solid #e5d2b5;
+  transition: all 0.3s;
+  overflow: hidden;
+  position: relative;
+  min-height: 65px;
+  display: flex;
+  align-items: center;
+  line-height: 1.3;
+}
+
+.card:hover .value {
+  border-color: #0f5fae;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 80px 20px;
+  color: white;
+  font-size: 28px;
+  font-weight: 700;
+  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
+}
+
+.loading-indicator {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #0f5fae;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Emergency animations */
+@keyframes emergencyFlash {
+    0%, 100% { background: linear-gradient(135deg, #001f3f 0%, #003d7a 50%, #005ca9 100%); }
+    50% { background: linear-gradient(135deg, #ff4757 0%, #ff6348 50%, #ff4757 100%); }
+}
+
+@keyframes emergencyPulse {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); }
+    50% { transform: translate(-50%, -50%) scale(1.1); }
+}
+
+/* Toast notification */
+.toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 15px 25px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    z-index: 10000;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.toast.show {
+    opacity: 1;
+}
+
+/* RESPONSIVE */
+@media (max-width: 1200px) {
+  .grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  body {
+    overflow: auto;
+  }
+  
+  .grid-container {
+    height: auto;
+    overflow: visible;
+  }
+  
+  .grid-wrapper {
+    transition: none;
+    transform: none !important;
+  }
+  
+  .top-bar {
+    height: auto;
+    flex-direction: column;
+    padding: 20px;
+    gap: 20px;
+  }
+  
+  .company-section {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .company-name {
+    font-size: 24px;
+  }
+  
+  .company-tagline {
+    font-size: 14px;
+  }
+  
+  .search-section {
+    width: 100%;
+    margin: 0;
+    max-width: 100%;
+  }
+  
+  .time-section {
+    align-items: center;
+  }
+  
+  .stats-bar {
+    height: auto;
+    flex-wrap: wrap;
+    gap: 15px;
+    padding: 20px;
+  }
+  
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    padding: 25px 20px 120px 20px;
+  }
+  
+  .card {
+    min-height: 280px;
+    padding: 20px;
+  }
+  
+  .value {
+    font-size: 18px;
+    padding: 12px;
+    min-height: 55px;
+  }
+  
+  .add-btn {
+    width: 65px;
+    height: 65px;
+    font-size: 38px;
+    bottom: 30px;
+    right: 30px;
+  }
+}
+
+@media (max-width: 480px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
   <style>@view-transition { navigation: auto; }</style>
+  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
  </head>
- <body class="min-h-full bg-gradient-to-br from-blue-50 to-indigo-100"><!-- Mode Indicator -->
-  <div id="mode-indicator" class="mode-indicator user-mode">
-   📱 USER MODE
-  </div><!-- Main Container -->
-  <div class="w-full max-w-none px-2 sm:px-4 lg:px-6 xl:px-8 2xl:px-12 py-6 display-panel" id="main-container"><!-- Header -->
-   <header id="main-header" class="text-center mb-8">
-    <div class="bg-white rounded-xl shadow-lg p-6 mb-4 relative">
-     <div class="absolute top-4 right-4"><button id="nav-toggle-btn" class="bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-lg font-semibold transition-all flex items-center gap-2"> <span>🏠</span> <span class="text-sm">Menu</span> </button>
-     </div><!-- Navigation Menu -->
-     <nav id="navigation-bar" class="absolute top-16 right-4 bg-white rounded-xl shadow-lg p-3 z-50 hidden fade-in">
-      <div class="flex flex-col gap-2 min-w-[150px]"><button id="user-mode-btn" class="nav-btn px-4 py-2 rounded-md font-semibold transition-all flex items-center gap-2 bg-green-500 text-white text-sm"> <span>👤</span> <span>User</span> </button> <button id="controller-mode-btn" class="nav-btn px-4 py-2 rounded-md font-semibold transition-all flex items-center gap-2 text-gray-600 hover:text-gray-800 text-sm"> <span>🎮</span> <span>Controller</span> </button> <button id="display-mode-btn" class="nav-btn px-4 py-2 rounded-md font-semibold transition-all flex items-center gap-2 text-gray-600 hover:text-gray-800 text-sm"> <span>📺</span> <span>Display</span> </button>
-      </div>
-     </nav>
-     <div class="flex items-center gap-6"><img src="https://logic.gmsbd.com/platform/file_upload/company_details_1_5639_0.jpg" alt="Company Logo" class="h-16 w-auto object-contain rounded-lg shadow-md" onerror="this.style.display='none'; this.alt='Logo failed to load';">
-      <div class="text-left">
-       <h1 id="system-title" class="text-3xl font-bold text-blue-800 mb-1" data-system-title>GMS COMPOSITE KNITTING IND LTD</h1>
-       <p class="text-lg font-semibold text-gray-700" data-display-title>FINISH FABRICS MCD</p>
-      </div>
-     </div><!-- Status Indicators -->
-     <div class="flex justify-center gap-4 mt-4">
-      <div id="connection-status" class="flex items-center gap-2 px-3 py-1 rounded-full bg-green-100 text-green-800 text-sm">
-       <div class="w-2 h-2 bg-green-500 rounded-full pulse-animation"></div><span>Connected</span>
-      </div>
-      <div id="admin-status" class="flex items-center gap-2 px-3 py-1 rounded-full bg-gray-100 text-gray-600 text-sm">
-       <div class="w-2 h-2 bg-gray-400 rounded-full"></div><span>Admin Offline</span>
+ <body>
+  <main><!-- TOP BAR -->
+   <header class="top-bar">
+    <div class="company-section">
+     <div class="home-btn"><img src="https://logic.gmsbd.com/platform/file_upload/company_details_1_5639_0.jpg" alt="Company Logo" onerror="this.src=''; this.alt='Logo failed to load'; this.style.display='none';">
+     </div>
+     <div class="company-info">
+      <h1 class="company-name">MCD FINISH FABRIC</h1>
+      <div class="company-tagline">
+       Real-time user
+       Rack Information System
       </div>
      </div>
     </div>
-   </header><!-- Controller Access Panel -->
-   <div id="controller-access" class="bg-white rounded-xl shadow-lg p-6 mb-8 hidden">
-    <h3 class="text-xl font-semibold text-gray-800 mb-4">Controller Access</h3>
-    <div class="space-y-4">
-     <div><label for="access-code" class="block text-sm font-medium text-gray-700 mb-2">Enter Controller Code</label> <input type="password" id="access-code" class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-red-500 focus:outline-none transition-colors" placeholder="Enter access code">
-     </div>
-     <div class="flex gap-3"><button id="verify-code-btn" class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors"> Verify &amp; Enter Controller Mode </button> <button id="cancel-controller-btn" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors"> Cancel </button>
+    <div class="search-section">
+     <div class="search-box"><span class="search-icon">🔍</span> <label for="searchInput" style="display: none;">Search buyers</label> <input type="text" id="searchInput" placeholder="Search buyer name or location..."> <span class="mic-icon">🎤</span>
      </div>
     </div>
-   </div><!-- User Controls -->
-   <div id="user-controls" class="bg-white rounded-xl shadow-lg p-6 mb-8">
-    <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
-     <div class="flex-1 max-w-md">
-      <div class="relative"><input type="text" id="search-input" placeholder="Search by buyer or rack location..." class="w-full px-4 py-3 pl-10 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none transition-colors">
-       <svg class="absolute left-3 top-3.5 h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-       </svg>
+    <div class="time-section">
+     <div class="current-time" id="currentTime">
+      00:00:00
+     </div>
+     <div class="current-date" id="currentDate">
+      Loading...
+     </div>
+    </div>
+   </header><!-- STATS BAR -->
+   <div class="stats-bar">
+    <div class="stat-item">
+     <div class="stat-icon">
+      👥
+     </div>
+     <div class="stat-content">
+      <div class="stat-label">
+       Total Buyers
+      </div>
+      <div class="stat-value" id="totalBuyers">
+       0
       </div>
      </div>
-     <div class="flex items-center gap-3"><label for="items-per-row" class="text-sm font-medium text-gray-700">Items per row:</label> <select id="items-per-row" class="px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none transition-colors"> <option value="auto">Auto</option> <option value="2">2</option> <option value="4">4</option> <option value="6">6</option> <option value="8">8</option> <option value="10">10</option> <option value="12">12</option> <option value="16">16</option> <option value="20">20</option> </select>
-     </div><button id="user-add-item-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-      </svg><span>Add New Item</span> </button>
     </div>
-    <div class="mt-4 flex justify-center">
-     <div class="bg-gray-50 rounded-lg px-4 py-2"><span class="text-gray-600">Total Items: </span> <span id="total-count" class="font-bold text-blue-600">0</span>
+    <div class="stat-item">
+     <div class="stat-icon">
+      🌍
      </div>
-    </div>
-   </div><!-- Add Item Form (For All Users) -->
-   <div id="user-add-item-form" class="bg-white rounded-xl shadow-lg p-6 mb-8 hidden">
-    <h3 class="text-xl font-semibold mb-4 text-gray-800 flex items-center gap-2"><span class="text-2xl">➕</span> Add New Item</h3>
-    <form id="user-item-form" class="space-y-4">
-     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div><label for="user-buyer-name" class="block text-sm font-medium text-gray-700 mb-2">BUYER NAME *</label> <input type="text" id="user-buyer-name" placeholder="Enter buyer name" required class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none transition-colors text-lg font-medium">
+     <div class="stat-content">
+      <div class="stat-label">
+       Locations
       </div>
-      <div><label for="user-rack-location" class="block text-sm font-medium text-gray-700 mb-2">RACK LOCATION *</label> <input type="text" id="user-rack-location" placeholder="Enter rack location" required class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none transition-colors text-lg font-medium">
+      <div class="stat-value" id="totalLocations">
+       0
       </div>
      </div>
-     <div><label for="user-sr-id-no" class="block text-sm font-medium text-gray-700 mb-2">SR/ID NO (Optional)</label> <input type="text" id="user-sr-id-no" placeholder="Enter SR/ID number (optional)" class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none transition-colors text-lg font-medium">
-     </div>
-     <div class="flex gap-3"><button type="submit" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-lg font-semibold flex items-center justify-center gap-2 transition-colors"> <span id="user-add-btn-text">Add Item</span>
-       <div id="user-add-btn-spinner" class="loading-spinner hidden"></div></button> <button type="button" id="user-cancel-add-btn" class="px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-lg font-semibold transition-colors"> Cancel </button>
-     </div>
-    </form>
-   </div><!-- Search and Filter Bar -->
-   <div id="search-filter-bar" class="bg-white rounded-xl shadow-lg p-4 mb-6 hidden">
-    <div class="flex flex-col sm:flex-row gap-4">
-     <div class="flex-1"><input type="text" id="search-input" placeholder="Search by buyer name or rack location..." class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg">
-     </div>
-     <div class="flex gap-2"><select id="item-type-filter" class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-lg"> <option value="">All Types</option> <option value="Finish Fabric">Finish Fabric</option> <option value="Yarn">Yarn</option> <option value="Grey Fabric">Grey Fabric</option> <option value="Accessories">Accessories</option> </select> <button id="clear-search-btn" class="px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-lg font-semibold transition-all"> Clear </button>
-     </div>
     </div>
-   </div><!-- Inventory Grid -->
-   <div id="inventory-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6"><!-- Items will be rendered here -->
-   </div><!-- Empty State -->
-   <div id="empty-state" class="hidden text-center py-12">
-    <div class="text-6xl mb-4">
-     📦
-    </div>
-    <h3 class="text-xl font-semibold text-gray-600 mb-2">No Items Found</h3>
-    <p class="text-gray-500">Add some inventory items to get started</p>
-   </div>
-  </div><!-- Mobile Controls (Controller Mode Only) -->
-  <div id="mobile-controls" class="mobile-controls hidden">
-   <div class="flex flex-col gap-4"><!-- Add Item Form -->
-    <div id="add-item-form" class="hidden bg-gray-50 p-4 rounded-lg">
-     <h3 class="text-lg font-semibold mb-3">Add New Item</h3>
-     <form id="item-form" class="space-y-3">
-      <div class="space-y-3"><input type="text" id="buyer-name" placeholder="BUYER NAME" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg font-medium"> <input type="text" id="rack-location" placeholder="RACK LOCATION" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg font-medium"> <input type="text" id="sr-id-no" placeholder="SR/ID NO (Optional)" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg font-medium">
+    <div class="stat-item">
+     <div class="stat-icon">
+      ✅
+     </div>
+     <div class="stat-content">
+      <div class="stat-label">
+       Active
       </div>
-      <div class="flex gap-2"><button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg font-semibold flex items-center justify-center gap-2"> <span id="add-btn-text">Add Item</span>
-        <div id="add-btn-spinner" class="loading-spinner hidden"></div></button> <button type="button" id="cancel-add-btn" class="px-4 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-lg font-semibold"> Cancel </button>
+      <div class="stat-value" id="activeBuyers">
+       0
+      </div>
+     </div>
+    </div>
+    <div class="stat-item">
+     <div class="stat-icon">
+      📊
+     </div>
+     <div class="stat-content">
+      <div class="stat-label">
+       Displayed
+      </div>
+      <div class="stat-value" id="displayedBuyers">
+       0
+      </div>
+     </div>
+    </div>
+   </div><!-- CARD GRID -->
+   <div class="grid-container">
+    <div class="grid-wrapper" id="gridWrapper">
+     <div class="grid" id="cardGrid"></div>
+    </div>
+   </div><!-- ADD BUTTON --> <button class="add-btn" id="addBtn" aria-label="Add new buyer">+</button> <!-- MODAL -->
+   <div class="modal" id="modal" role="dialog" aria-modal="true">
+    <div class="modal-content">
+     <h2 class="modal-header" id="modalTitle">Add New Buyer</h2>
+     <form id="buyerForm">
+      <div class="form-group"><label for="buyerName" id="buyerNameLabel">BUYER NAME</label> <input type="text" id="buyerName" required>
+      </div>
+      <div class="form-group"><label for="buyerLocation" id="buyerLocationLabel">LOCATION</label> <input type="text" id="buyerLocation" required>
+      </div>
+      <div class="modal-buttons"><button type="button" class="modal-btn modal-btn-secondary" id="cancelBtn">Cancel</button> <button type="submit" class="modal-btn modal-btn-primary" id="submitBtn">Save</button>
       </div>
      </form>
-    </div><!-- Control Buttons -->
-    <div class="flex gap-2"><button id="add-item-btn" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg font-semibold flex items-center justify-center gap-2"> <span>➕</span> <span>Add Item</span> </button> <button id="clear-highlights-btn" class="px-4 py-3 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg font-semibold"> 🔍 </button> <button id="scroll-top-btn" class="px-4 py-3 bg-purple-500 hover:bg-purple-600 text-white rounded-lg font-semibold"> ⬆️ </button> <button id="controller-logout-btn" class="px-4 py-3 bg-red-500 hover:bg-red-600 text-white rounded-lg font-semibold flex items-center gap-1"> <span>🚪</span> <span class="text-sm">Logout</span> </button>
     </div>
    </div>
-  </div><!-- Admin Lock Overlay -->
-  <div id="admin-lock-overlay" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-   <div class="bg-white p-8 rounded-xl text-center max-w-sm mx-4">
-    <div class="text-6xl mb-4">
-     🔒
-    </div>
-    <h3 class="text-xl font-semibold mb-2">Controller Active</h3>
-    <p class="text-gray-600 mb-4">A controller is currently managing this display</p>
-    <div class="flex items-center justify-center gap-2 text-blue-600">
-     <div class="w-2 h-2 bg-blue-500 rounded-full pulse-animation"></div><span class="text-sm">Syncing...</span>
-    </div>
-   </div>
-  </div>
+  </main>
+  <!-- Toast notification -->
+  <div class="toast" id="toast"></div>
   <script>
-        // Global variables
-        let currentMode = 'user';
-        let inventoryData = [];
-        let filteredData = [];
-        let currentRecordCount = 0;
-        let isAdminActive = false;
-        let highlightedItems = new Set();
-        let adminSessionId = null;
-        let lastCommandId = 0;
-        
-        // Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyCTQZ0B_tZ8fY8Jh5pLxXl8fXKcTjYdU4",
-            authDomain: "finish-fab-display-default-rtdb.firebaseapp.com",
-            databaseURL: "https://finish-fab-display-default-rtdb.firebaseio.com",
-            projectId: "finish-fab-display-default-rtdb",
-            storageBucket: "finish-fab-display-default-rtdb.appspot.com",
-            messagingSenderId: "123456789",
-            appId: "1:123456789:web:abcdef123456"
-        };
-        
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
+// Initialize Firebase
+const firebaseConfig = {
+  databaseURL: "https://finish-fab-display-default-rtdb.firebaseio.com/"
+};
 
-        // Configuration
-        const defaultConfig = {
-            company_name: "GMS Textiles",
-            system_title: "GMS COMPOSITE KNITTING IND LTD",
-            display_title: "FINISH FABRICS MCD RACK DISPLAY"
-        };
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
+const buyersRef = database.ref('buyers');
+const remoteControlRef = database.ref('remoteControl');
 
-        // Initialize SDK
-        async function initializeSDK() {
-            if (window.elementSdk) {
-                window.elementSdk.init({
-                    defaultConfig,
-                    onConfigChange: async (config) => {
-                        // Update company name
-                        const companyElements = document.querySelectorAll('[data-company-name]');
-                        companyElements.forEach(el => {
-                            el.textContent = config.company_name || defaultConfig.company_name;
-                        });
+const defaultConfig = {
+  search_placeholder: "Search buyer name or location...",
+  buyer_label: "BUYER NAME",
+  location_label: "LOCATION",
+  background_color: "#003d7a",
+  surface_color: "#ffc264",
+  text_color: "#1a1a1a",
+  primary_action_color: "#0f5fae",
+  secondary_action_color: "#ffffff"
+};
 
-                        // Update system title
-                        const systemTitleElements = document.querySelectorAll('[data-system-title]');
-                        systemTitleElements.forEach(el => {
-                            el.textContent = config.system_title || defaultConfig.system_title;
-                        });
+let allBuyerData = [];
+let currentEditingBuyer = null;
+let autoScrollInterval = null;
+let currentRow = 0;
+let scrollSpeed = 5000; // Default scroll speed
 
-                        // Update display title
-                        const displayTitleElements = document.querySelectorAll('[data-display-title]');
-                        displayTitleElements.forEach(el => {
-                            el.textContent = config.display_title || defaultConfig.display_title;
-                        });
-                    },
-                    mapToCapabilities: (config) => ({
-                        recolorables: [],
-                        borderables: [],
-                        fontEditable: undefined,
-                        fontSizeable: undefined
-                    }),
-                    mapToEditPanelValues: (config) => new Map([
-                        ["company_name", config.company_name || defaultConfig.company_name],
-                        ["system_title", config.system_title || defaultConfig.system_title],
-                        ["display_title", config.display_title || defaultConfig.display_title]
-                    ])
-                });
+// Remote control receiver
+remoteControlRef.on('value', (snapshot) => {
+    const data = snapshot.val();
+    if (data && data.command) {
+        handleRemoteCommand(data.command, data.data);
+    }
+});
+
+function handleRemoteCommand(command, data) {
+    switch(command) {
+        case 'search':
+            if (data && data.query !== undefined) {
+                document.getElementById('searchInput').value = data.query;
+                document.getElementById('searchInput').dispatchEvent(new Event('input'));
             }
+            break;
             
-            // Set up Firebase listeners
-            setupFirebaseListeners();
-        }
-
-        // Firebase listeners
-        function setupFirebaseListeners() {
-            // Listen for inventory items
-            database.ref('inventory').on('value', (snapshot) => {
-                const data = snapshot.val() || {};
-                inventoryData = Object.keys(data).map(key => ({
-                    id: key,
-                    ...data[key]
-                }));
-                
-                currentRecordCount = inventoryData.length;
-                
-                // Apply current filters and render
-                applyFilters();
-                renderInventory();
-                
-                // Update total count display
-                updateTotalCount();
-            });
+        case 'clearSearch':
+            document.getElementById('searchInput').value = '';
+            document.getElementById('searchInput').dispatchEvent(new Event('input'));
+            break;
             
-            // Listen for admin session
-            database.ref('session_admin').on('value', (snapshot) => {
-                const adminSession = snapshot.val();
-                updateAdminStatus(adminSession);
-            });
-            
-            // Listen for sync commands
-            database.ref('commands').on('value', (snapshot) => {
-                const commands = snapshot.val() || {};
-                const commandList = Object.keys(commands).map(key => ({
-                    id: key,
-                    ...commands[key]
-                }));
-                
-                if (commandList.length > 0 && currentMode !== 'controller') {
-                    processSyncCommands(commandList);
-                }
-            });
-        }
-
-        // Controller access functions
-        function showControllerAccess() {
-            document.getElementById('controller-access').classList.remove('hidden');
-            document.getElementById('navigation-bar').classList.add('hidden');
-            document.getElementById('access-code').focus();
-        }
-
-        function hideControllerAccess() {
-            document.getElementById('controller-access').classList.add('hidden');
-            document.getElementById('access-code').value = '';
-        }
-
-        function verifyControllerCode() {
-            const code = document.getElementById('access-code').value;
-            const correctCode = '1234'; // You can change this to any code you want
-            
-            if (code === correctCode) {
-                hideControllerAccess();
-                switchMode('controller');
-                showToast('Controller access granted', 'success');
-            } else {
-                showToast('Invalid access code', 'error');
-                document.getElementById('access-code').value = '';
-                document.getElementById('access-code').focus();
-            }
-        }
-
-        // Mode switching
-        function switchMode(mode) {
-            currentMode = mode;
-            
-            // Update mode indicator
-            const modeIndicator = document.getElementById('mode-indicator');
-            const modeText = {
-                'user': '👤 USER MODE',
-                'controller': '🎮 CONTROLLER MODE',
-                'display': '📺 DISPLAY MODE'
-            };
-            
-            modeIndicator.textContent = modeText[mode];
-            modeIndicator.className = `mode-indicator ${mode}-mode`;
-            
-            // Update navigation buttons
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('bg-green-500', 'bg-blue-500', 'bg-purple-500', 'text-white');
-                btn.classList.add('text-gray-600', 'hover:text-gray-800');
-            });
-            
-            const activeBtn = document.getElementById(`${mode}-mode-btn`);
-            if (activeBtn) {
-                activeBtn.classList.remove('text-gray-600', 'hover:text-gray-800');
-                const colors = {
-                    'user': 'bg-green-500',
-                    'controller': 'bg-blue-500',
-                    'display': 'bg-purple-500'
-                };
-                activeBtn.classList.add(colors[mode], 'text-white');
-            }
-            
-            // Show/hide mobile controls
-            const mobileControls = document.getElementById('mobile-controls');
-            if (mode === 'controller') {
-                mobileControls.classList.remove('hidden');
-                startControllerSession();
-            } else {
-                mobileControls.classList.add('hidden');
-                if (adminSessionId) {
-                    clearControllerSession();
-                }
-            }
-            
-            // Hide navigation
-            document.getElementById('navigation-bar').classList.add('hidden');
-            
-            // Clear search and highlights when switching modes
-            if (mode !== 'controller') {
-                document.getElementById('search-input').value = '';
-                highlightedItems.clear();
-                applyFilters();
-                renderInventory();
-            }
-            
-            // Update UI based on admin status
-            updateUIForAdminStatus();
-            
-            // Show mode-specific notifications
-            if (mode === 'controller') {
-                showLiveSyncNotification();
-            } else if (mode === 'display') {
-                showDisplayModeNotification();
-            }
-        }
-
-        function showLiveSyncNotification() {
-            const notification = document.createElement('div');
-            notification.className = 'fixed top-20 left-1/2 transform -translate-x-1/2 z-50 bg-blue-600 text-white px-6 py-4 rounded-lg shadow-lg max-w-md text-center';
-            notification.innerHTML = `
-                <div class="flex items-center gap-3">
-                    <div class="text-2xl">🎮</div>
-                    <div>
-                        <div class="font-semibold">Live Screen Control Active</div>
-                        <div class="text-sm opacity-90">All users will see your actions in real-time</div>
-                    </div>
-                </div>
-            `;
-            
-            document.body.appendChild(notification);
-            
-            setTimeout(() => {
-                notification.remove();
-            }, 4000);
-        }
-
-        function showDisplayModeNotification() {
-            const notification = document.createElement('div');
-            notification.className = 'fixed top-20 left-1/2 transform -translate-x-1/2 z-50 bg-purple-600 text-white px-6 py-4 rounded-lg shadow-lg max-w-md text-center';
-            notification.innerHTML = `
-                <div class="flex items-center gap-3">
-                    <div class="text-2xl">📺</div>
-                    <div>
-                        <div class="font-semibold">Display Mode Active</div>
-                        <div class="text-sm opacity-90">Perfect for TV screens and monitoring</div>
-                    </div>
-                </div>
-            `;
-            
-            document.body.appendChild(notification);
-            
-            setTimeout(() => {
-                notification.remove();
-            }, 3000);
-        }
-
-        // Controller session management
-        async function startControllerSession() {
-            if (currentMode === 'controller') {
-                adminSessionId = 'admin_' + Date.now();
-                const sessionData = {
-                    session_type: 'admin_active',
-                    admin_id: adminSessionId,
-                    screen_control_active: true,
-                    current_view: 'inventory',
-                    scroll_position: 0,
-                    created_at: new Date().toISOString(),
-                    updated_at: new Date().toISOString()
-                };
-                
-                await database.ref('session_admin').set(sessionData);
-                
-                // Start heartbeat and screen sync
-                startControllerHeartbeat();
-                startScreenSync();
-                
-                showToast('🎮 Live Screen Control Active - All users will see your actions', 'success');
-            }
-        }
-
-        // Controller logout function
-        async function logoutController() {
-            if (currentMode === 'controller') {
-                // Clear controller session
-                await clearControllerSession();
-                
-                // Switch back to user mode instead of refreshing
-                switchMode('user');
-                
-                // Show logout message
-                showToast('🚪 Controller logged out successfully', 'success');
-            }
-        }
-
-        async function clearControllerSession() {
-            if (adminSessionId) {
-                // Remove admin session
-                await database.ref('session_admin').remove();
-                
-                // Clear all sync commands
-                await database.ref('commands').remove();
-                
-                adminSessionId = null;
-            }
-        }
-
-        function startControllerHeartbeat() {
-            setInterval(async () => {
-                if (currentMode === 'controller' && adminSessionId) {
-                    const sessionRef = database.ref('session_admin');
-                    sessionRef.once('value').then((snapshot) => {
-                        const sessionData = snapshot.val();
-                        if (sessionData) {
-                            sessionRef.update({
-                                updated_at: new Date().toISOString(),
-                                scroll_position: window.pageYOffset
-                            });
-                        }
-                    });
-                }
-            }, 1000); // More frequent updates for better sync
-        }
-
-        // Screen synchronization system
-        function startScreenSync() {
-            if (currentMode !== 'controller') return;
-            
-            // Track scroll position
-            let scrollTimeout;
-            window.addEventListener('scroll', () => {
-                clearTimeout(scrollTimeout);
-                scrollTimeout = setTimeout(async () => {
-                    await syncScrollPosition();
-                }, 100);
-            });
-            
-            // Track search input changes
-            const searchInput = document.getElementById('search-input');
-            if (searchInput) {
-                searchInput.addEventListener('input', debounce(syncSearchQuery, 300));
-            }
-            
-            // Track grid layout changes
-            const itemsPerRow = document.getElementById('items-per-row');
-            if (itemsPerRow) {
-                itemsPerRow.addEventListener('change', syncGridLayout);
-            }
-        }
-
-        async function syncScrollPosition() {
-            if (currentMode === 'controller') {
-                await sendSyncCommand('sync_scroll', {
-                    scrollY: window.pageYOffset,
-                    timestamp: Date.now()
-                });
-            }
-        }
-
-        async function syncSearchQuery() {
-            if (currentMode === 'controller') {
-                const query = document.getElementById('search-input').value;
-                await sendSyncCommand('sync_search', {
-                    query: query,
-                    timestamp: Date.now()
-                });
-            }
-        }
-
-        async function syncGridLayout() {
-            if (currentMode === 'controller') {
-                const layout = document.getElementById('items-per-row').value;
-                await sendSyncCommand('sync_grid', {
-                    layout: layout,
-                    timestamp: Date.now()
-                });
-            }
-        }
-
-        // Debounce utility function
-        function debounce(func, wait) {
-            let timeout;
-            return function executedFunction(...args) {
-                const later = () => {
-                    clearTimeout(timeout);
-                    func(...args);
-                };
-                clearTimeout(timeout);
-                timeout = setTimeout(later, wait);
-            };
-        }
-
-        // Admin status management
-        function updateAdminStatus(adminSession) {
-            const wasAdminActive = isAdminActive;
-            
-            if (adminSession) {
-                const lastUpdate = new Date(adminSession.updated_at);
-                const now = new Date();
-                const timeDiff = now - lastUpdate;
-                
-                // Admin is active if last update was within 10 seconds
-                isAdminActive = timeDiff < 10000;
-            } else {
-                isAdminActive = false;
-            }
-            
-            // Update UI if status changed
-            if (wasAdminActive !== isAdminActive) {
-                updateUIForAdminStatus();
-            }
-        }
-
-        function updateUIForAdminStatus() {
-            const adminStatusEl = document.getElementById('admin-status');
-            const lockOverlay = document.getElementById('admin-lock-overlay');
-            const mainContainer = document.getElementById('main-container');
-            
-            if (isAdminActive && currentMode !== 'controller') {
-                // Show live screen control status
-                adminStatusEl.innerHTML = `
-                    <div class="w-2 h-2 bg-red-500 rounded-full pulse-animation"></div>
-                    <span>🎮 Live Screen Control</span>
-                `;
-                adminStatusEl.className = 'flex items-center gap-2 px-3 py-1 rounded-full bg-red-100 text-red-800 text-sm font-semibold';
-                
-                // Update lock overlay message
-                const lockOverlayContent = lockOverlay.querySelector('.bg-white');
-                if (lockOverlayContent) {
-                    lockOverlayContent.innerHTML = `
-                        <div class="text-6xl mb-4">🎮</div>
-                        <h3 class="text-xl font-semibold mb-2 text-red-600">Live Screen Control Active</h3>
-                        <p class="text-gray-600 mb-4">A controller is managing this display in real-time</p>
-                        <div class="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
-                            <p class="text-sm text-red-700">
-                                <strong>View-Only Mode:</strong><br>
-                                You can see all changes but cannot interact with the system
-                            </p>
-                        </div>
-                        <div class="flex items-center justify-center gap-2 text-red-600">
-                            <div class="w-2 h-2 bg-red-500 rounded-full pulse-animation"></div>
-                            <span class="text-sm font-semibold">Live Syncing...</span>
-                        </div>
-                    `;
-                }
-                
-                // Show lock overlay for user and display modes
-                if (currentMode === 'user' || currentMode === 'display') {
-                    lockOverlay.classList.remove('hidden');
-                    mainContainer.classList.add('admin-locked');
-                }
-            } else {
-                // Show controller offline status
-                adminStatusEl.innerHTML = `
-                    <div class="w-2 h-2 bg-gray-400 rounded-full"></div>
-                    <span>Controller Offline</span>
-                `;
-                adminStatusEl.className = 'flex items-center gap-2 px-3 py-1 rounded-full bg-gray-100 text-gray-600 text-sm';
-                
-                // Hide lock overlay
-                lockOverlay.classList.add('hidden');
-                mainContainer.classList.remove('admin-locked');
-            }
-        }
-
-        // Sync command system
-        async function sendSyncCommand(action, data) {
-            if (currentMode === 'controller') {
-                const commandId = ++lastCommandId;
-                const commandKey = `cmd_${commandId}_${Date.now()}`;
-                const commandData = {
-                    command_type: action,
-                    command_data: JSON.stringify(data),
-                    admin_id: adminSessionId,
-                    timestamp: new Date().toISOString(),
-                    created_at: new Date().toISOString(),
-                    updated_at: new Date().toISOString()
-                };
-                
-                await database.ref(`commands/${commandKey}`).set(commandData);
-                
-                // Auto-delete command after 5 seconds
-                setTimeout(async () => {
-                    await database.ref(`commands/${commandKey}`).remove();
-                }, 5000);
-            }
-        }
-
-        function processSyncCommands(commands) {
-            if (currentMode === 'controller') return; // Controller doesn't process its own commands
-            
-            commands.forEach(cmd => {
-                if (cmd.command_type && cmd.command_data) {
-                    const data = JSON.parse(cmd.command_data);
-                    
-                    switch (cmd.command_type) {
-                        case 'search':
-                            document.getElementById('search-input').value = data.query || '';
-                            highlightedItems.clear();
-                            if (data.highlightedItems) {
-                                data.highlightedItems.forEach(id => highlightedItems.add(id));
-                            }
-                            applyFilters();
-                            renderInventory();
-                            scrollToFirstHighlighted();
-                            break;
-                            
-                        case 'filter':
-                            document.getElementById('item-type-filter').value = data.itemType || '';
-                            applyFilters();
-                            renderInventory();
-                            break;
-                            
-                        case 'clear_highlights':
-                            highlightedItems.clear();
-                            document.getElementById('search-input').value = '';
-                            document.getElementById('item-type-filter').value = '';
-                            applyFilters();
-                            renderInventory();
-                            break;
-                            
-                        case 'scroll_to_top':
-                            window.scrollTo({ top: 0, behavior: 'smooth' });
-                            break;
-                            
-                        // New live sync commands
-                        case 'sync_scroll':
-                            if (data.scrollY !== undefined) {
-                                window.scrollTo({ top: data.scrollY, behavior: 'smooth' });
-                            }
-                            break;
-                            
-                        case 'sync_search':
-                            const searchInput = document.getElementById('search-input');
-                            if (searchInput && searchInput.value !== data.query) {
-                                searchInput.value = data.query || '';
-                                applyFilters();
-                                renderInventory();
-                            }
-                            break;
-                            
-                        case 'sync_grid':
-                            const gridSelect = document.getElementById('items-per-row');
-                            if (gridSelect && gridSelect.value !== data.layout) {
-                                gridSelect.value = data.layout;
-                                updateGridLayout(data.layout);
-                            }
-                            break;
-                    }
-                }
-            });
-        }
-
-        // Grid layout management
-        function updateGridLayout(itemsPerRow) {
-            const grid = document.getElementById('inventory-grid');
-            
-            // Remove existing grid classes
-            grid.className = grid.className.replace(/grid-cols-\d+/g, '');
-            
-            // Apply new grid layout
-            let gridClasses = 'grid gap-6 ';
-            switch(itemsPerRow) {
-                case '2':
-                    gridClasses += 'grid-cols-1 sm:grid-cols-2';
-                    break;
-                case '4':
-                    gridClasses += 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4';
-                    break;
-                case '6':
-                    gridClasses += 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6';
-                    break;
-                case '8':
-                    gridClasses += 'grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-8';
-                    break;
-                case '10':
-                    gridClasses += 'grid-cols-1 sm:grid-cols-2 md:grid-cols-5 lg:grid-cols-10';
-                    break;
-                case '12':
-                    gridClasses += 'grid-cols-1 sm:grid-cols-3 md:grid-cols-6 lg:grid-cols-12';
-                    break;
-                case '16':
-                    gridClasses += 'grid-cols-1 sm:grid-cols-4 md:grid-cols-8 lg:grid-cols-16';
-                    break;
-                case '20':
-                    gridClasses += 'grid-cols-1 sm:grid-cols-4 md:grid-cols-10 lg:grid-cols-20';
-                    break;
-                default: // auto
-                    gridClasses += 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5';
-            }
-            
-            grid.className = gridClasses;
-        }
-
-        // Search and filter functionality
-        function applyFilters() {
-            const searchInput = document.getElementById('search-input');
-            const itemTypeFilter = document.getElementById('item-type-filter');
-            
-            const searchQuery = searchInput ? searchInput.value.toLowerCase() : '';
-            const itemTypeValue = itemTypeFilter ? itemTypeFilter.value : '';
-            
-            console.log('Applying filters - Search:', searchQuery, 'Type:', itemTypeValue, 'Total items:', inventoryData.length);
-            
-            filteredData = inventoryData.filter(item => {
-                // Ensure item has required properties
-                if (!item.buyer_name || !item.rack_location) {
-                    console.warn('Item missing required properties:', item);
-                    return false;
-                }
-                
-                const matchesSearch = !searchQuery || 
-                    item.buyer_name.toLowerCase().includes(searchQuery) ||
-                    item.rack_location.toLowerCase().includes(searchQuery) ||
-                    (item.sr_id_no && item.sr_id_no.toLowerCase().includes(searchQuery));
-                
-                const matchesType = !itemTypeValue || item.item_type === itemTypeValue;
-                
-                return matchesSearch && matchesType;
-            });
-            
-            console.log('Filtered to', filteredData.length, 'items');
-            
-            // Update highlights and navigation based on search
-            if (searchQuery) {
-                highlightedItems.clear();
-                filteredData.forEach(item => {
-                    if (item.buyer_name.toLowerCase().includes(searchQuery) ||
-                        item.rack_location.toLowerCase().includes(searchQuery) ||
-                        (item.sr_id_no && item.sr_id_no.toLowerCase().includes(searchQuery))) {
-                        highlightedItems.add(item.id);
-                    }
-                });
-                
-                // Show navigation panel if there are search results
-                if (highlightedItems.size > 0) {
-                    showNavigationPanel();
-                }
-                
-                // Send sync command for controller mode
-                if (currentMode === 'controller') {
-                    sendSyncCommand('search', {
-                        query: searchQuery,
-                        highlightedItems: Array.from(highlightedItems)
-                    });
-                }
-            } else {
-                // Hide navigation panel when no search
-                hideNavigationPanel();
-            }
-        }
-
-        // Navigation panel functions
-        function showNavigationPanel() {
-            let navPanel = document.getElementById('navigation-panel');
-            if (!navPanel) {
-                createNavigationPanel();
-                navPanel = document.getElementById('navigation-panel');
-            }
-            
-            navPanel.classList.remove('hidden');
-            updateNavigationPanel();
-        }
-
-        function hideNavigationPanel() {
-            const navPanel = document.getElementById('navigation-panel');
-            if (navPanel) {
-                navPanel.classList.add('hidden');
-            }
-        }
-
-        function createNavigationPanel() {
-            const panel = document.createElement('div');
-            panel.id = 'navigation-panel';
-            panel.className = 'fixed bottom-20 right-4 bg-white rounded-2xl shadow-2xl p-6 z-40 border-2 border-blue-200 hidden';
-            panel.style.cssText = `
-                background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
-                box-shadow: 
-                    0 20px 40px rgba(59, 130, 246, 0.15),
-                    0 10px 25px rgba(0, 0, 0, 0.1),
-                    0 0 0 1px rgba(59, 130, 246, 0.1);
-                backdrop-filter: blur(10px);
-                min-width: 280px;
-                max-width: 320px;
-            `;
-            
-            panel.innerHTML = `
-                <div class="flex items-center gap-3 mb-4 pb-3 border-b border-blue-100">
-                    <div class="bg-gradient-to-r from-blue-500 to-indigo-600 p-2 rounded-lg">
-                        <span class="text-white text-lg">🗺️</span>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-gray-800 text-lg">Search Navigation</h3>
-                        <p class="text-sm text-gray-600">Found locations</p>
-                    </div>
-                </div>
-                
-                <div id="nav-results-info" class="mb-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
-                    <div class="flex items-center gap-2 text-blue-700">
-                        <span class="text-lg">📍</span>
-                        <span class="font-semibold">0 locations found</span>
-                    </div>
-                </div>
-                
-                <div class="space-y-3">
-                    <button id="nav-first-btn" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white py-3 px-4 rounded-lg font-semibold transition-all flex items-center justify-center gap-2 shadow-lg">
-                        <span>🎯</span>
-                        <span>Go to First Result</span>
-                    </button>
-                    
-                    <div class="grid grid-cols-2 gap-2">
-                        <button id="nav-prev-btn" class="bg-gray-500 hover:bg-gray-600 text-white py-2 px-3 rounded-lg font-semibold transition-all flex items-center justify-center gap-1 text-sm">
-                            <span>⬆️</span>
-                            <span>Previous</span>
-                        </button>
-                        <button id="nav-next-btn" class="bg-gray-500 hover:bg-gray-600 text-white py-2 px-3 rounded-lg font-semibold transition-all flex items-center justify-center gap-1 text-sm">
-                            <span>⬇️</span>
-                            <span>Next</span>
-                        </button>
-                    </div>
-                    
-                    <button id="nav-show-all-btn" class="w-full bg-gradient-to-r from-purple-500 to-violet-600 hover:from-purple-600 hover:to-violet-700 text-white py-3 px-4 rounded-lg font-semibold transition-all flex items-center justify-center gap-2 shadow-lg">
-                        <span>👁️</span>
-                        <span>Show All Results</span>
-                    </button>
-                    
-                    <button id="nav-close-btn" class="w-full bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg font-semibold transition-all flex items-center justify-center gap-2 text-sm">
-                        <span>❌</span>
-                        <span>Close Navigation</span>
-                    </button>
-                </div>
-            `;
-            
-            document.body.appendChild(panel);
-            
-            // Add event listeners
-            document.getElementById('nav-first-btn').addEventListener('click', navigateToFirst);
-            document.getElementById('nav-prev-btn').addEventListener('click', navigateToPrevious);
-            document.getElementById('nav-next-btn').addEventListener('click', navigateToNext);
-            document.getElementById('nav-show-all-btn').addEventListener('click', showAllResults);
-            document.getElementById('nav-close-btn').addEventListener('click', closeNavigation);
-        }
-
-        let currentNavigationIndex = 0;
-
-        function updateNavigationPanel() {
-            const resultsInfo = document.getElementById('nav-results-info');
-            const highlightedArray = Array.from(highlightedItems);
-            
-            if (resultsInfo) {
-                resultsInfo.innerHTML = `
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-2 text-blue-700">
-                            <span class="text-lg">📍</span>
-                            <span class="font-semibold">${highlightedArray.length} locations found</span>
-                        </div>
-                        ${highlightedArray.length > 0 ? `
-                            <div class="text-sm text-blue-600 font-medium">
-                                ${currentNavigationIndex + 1} of ${highlightedArray.length}
-                            </div>
-                        ` : ''}
-                    </div>
-                `;
-            }
-            
-            // Update button states
-            const prevBtn = document.getElementById('nav-prev-btn');
-            const nextBtn = document.getElementById('nav-next-btn');
-            
-            if (prevBtn && nextBtn) {
-                prevBtn.disabled = currentNavigationIndex === 0;
-                nextBtn.disabled = currentNavigationIndex >= highlightedArray.length - 1;
-                
-                prevBtn.className = currentNavigationIndex === 0 ? 
-                    'bg-gray-300 text-gray-500 py-2 px-3 rounded-lg font-semibold flex items-center justify-center gap-1 text-sm cursor-not-allowed' :
-                    'bg-gray-500 hover:bg-gray-600 text-white py-2 px-3 rounded-lg font-semibold transition-all flex items-center justify-center gap-1 text-sm';
-                    
-                nextBtn.className = currentNavigationIndex >= highlightedArray.length - 1 ? 
-                    'bg-gray-300 text-gray-500 py-2 px-3 rounded-lg font-semibold flex items-center justify-center gap-1 text-sm cursor-not-allowed' :
-                    'bg-gray-500 hover:bg-gray-600 text-white py-2 px-3 rounded-lg font-semibold transition-all flex items-center justify-center gap-1 text-sm';
-            }
-        }
-
-        function navigateToFirst() {
-            const highlightedArray = Array.from(highlightedItems);
-            if (highlightedArray.length > 0) {
-                currentNavigationIndex = 0;
-                scrollToItem(highlightedArray[0]);
-                updateNavigationPanel();
-                showLocationIndicator(highlightedArray[0]);
-            }
-        }
-
-        function navigateToPrevious() {
-            const highlightedArray = Array.from(highlightedItems);
-            if (currentNavigationIndex > 0) {
-                currentNavigationIndex--;
-                scrollToItem(highlightedArray[currentNavigationIndex]);
-                updateNavigationPanel();
-                showLocationIndicator(highlightedArray[currentNavigationIndex]);
-            }
-        }
-
-        function navigateToNext() {
-            const highlightedArray = Array.from(highlightedItems);
-            if (currentNavigationIndex < highlightedArray.length - 1) {
-                currentNavigationIndex++;
-                scrollToItem(highlightedArray[currentNavigationIndex]);
-                updateNavigationPanel();
-                showLocationIndicator(highlightedArray[currentNavigationIndex]);
-            }
-        }
-
-        function showAllResults() {
-            // Scroll to show all highlighted items in view
-            const highlightedElements = document.querySelectorAll('.highlighted');
-            if (highlightedElements.length > 0) {
-                const firstElement = highlightedElements[0];
-                const lastElement = highlightedElements[highlightedElements.length - 1];
-                
-                // Calculate the center point between first and last elements
-                const firstRect = firstElement.getBoundingClientRect();
-                const lastRect = lastElement.getBoundingClientRect();
-                const centerY = (firstRect.top + lastRect.bottom) / 2;
-                const scrollY = window.pageYOffset + centerY - window.innerHeight / 2;
-                
-                window.scrollTo({ top: scrollY, behavior: 'smooth' });
-                
-                // Show path indicators for all results
-                showPathIndicators();
-            }
-        }
-
-        function closeNavigation() {
-            hideNavigationPanel();
-            // Clear search
-            document.getElementById('search-input').value = '';
-            highlightedItems.clear();
-            applyFilters();
-            renderInventory();
-            removeAllIndicators();
-        }
-
-        function scrollToItem(itemId) {
-            const element = document.querySelector(`[data-item-id="${itemId}"]`);
-            if (element) {
-                element.scrollIntoView({ 
-                    behavior: 'smooth', 
-                    block: 'center',
-                    inline: 'nearest'
-                });
-                
-                // Add extra highlight animation
-                element.style.animation = 'none';
+        case 'highlightRandom':
+            const cards = document.querySelectorAll('.card');
+            if (cards.length > 0) {
+                const randomIndex = Math.floor(Math.random() * cards.length);
+                cards[randomIndex].classList.add('jump');
                 setTimeout(() => {
-                    element.style.animation = 'pulse 1s ease-in-out 3';
-                }, 100);
+                    cards[randomIndex].classList.remove('jump');
+                }, 800);
             }
-        }
-
-        function showLocationIndicator(itemId) {
-            // Remove existing indicators
-            removeAllIndicators();
+            break;
             
-            const element = document.querySelector(`[data-item-id="${itemId}"]`);
-            if (element) {
-                // Create location indicator (like Google Maps pin)
-                const indicator = document.createElement('div');
-                indicator.className = 'location-indicator';
-                indicator.innerHTML = `
-                    <div class="location-pin">
-                        <div class="pin-head">
-                            <span class="pin-icon">👤</span>
-                        </div>
-                        <div class="pin-point"></div>
-                    </div>
-                    <div class="location-pulse"></div>
-                `;
-                
-                // Position indicator
-                const rect = element.getBoundingClientRect();
-                indicator.style.cssText = `
-                    position: fixed;
-                    top: ${rect.top - 60}px;
-                    left: ${rect.left + rect.width / 2 - 20}px;
-                    z-index: 1000;
-                    pointer-events: none;
-                `;
-                
-                document.body.appendChild(indicator);
-                
-                // Auto remove after 5 seconds
-                setTimeout(() => {
-                    if (indicator.parentNode) {
-                        indicator.remove();
-                    }
-                }, 5000);
-            }
-        }
-
-        function showPathIndicators() {
-            removeAllIndicators();
+        case 'scrollUp':
+            currentRow = Math.max(0, currentRow - 1);
+            updateScrollPosition();
+            break;
             
-            const highlightedElements = document.querySelectorAll('.highlighted');
-            highlightedElements.forEach((element, index) => {
-                setTimeout(() => {
-                    const indicator = document.createElement('div');
-                    indicator.className = 'path-indicator';
-                    indicator.innerHTML = `
-                        <div class="path-marker">
-                            <span class="path-number">${index + 1}</span>
-                        </div>
-                        <div class="path-pulse"></div>
-                    `;
-                    
-                    const rect = element.getBoundingClientRect();
-                    indicator.style.cssText = `
-                        position: fixed;
-                        top: ${rect.top - 40}px;
-                        left: ${rect.left + rect.width - 40}px;
-                        z-index: 999;
-                        pointer-events: none;
-                    `;
-                    
-                    document.body.appendChild(indicator);
-                    
-                    // Auto remove after 8 seconds
-                    setTimeout(() => {
-                        if (indicator.parentNode) {
-                            indicator.remove();
-                        }
-                    }, 8000);
-                }, index * 200); // Stagger the appearance
-            });
-        }
-
-        function removeAllIndicators() {
-            document.querySelectorAll('.location-indicator, .path-indicator').forEach(indicator => {
-                indicator.remove();
-            });
-        }
-
-        function scrollToFirstHighlighted() {
-            if (highlightedItems.size > 0) {
-                setTimeout(() => {
-                    const firstHighlighted = document.querySelector('.highlighted');
-                    if (firstHighlighted) {
-                        firstHighlighted.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }
-                }, 100);
-            }
-        }
-
-        // Render inventory
-        function renderInventory() {
-            const grid = document.getElementById('inventory-grid');
-            const emptyState = document.getElementById('empty-state');
+        case 'scrollDown':
+            const totalRows = Math.ceil(allBuyerData.length / 5);
+            currentRow = Math.min(totalRows - 1, currentRow + 1);
+            updateScrollPosition();
+            break;
             
-            console.log('Rendering inventory:', filteredData.length, 'filtered items from', inventoryData.length, 'total items');
+        case 'pauseScroll':
+            stopAutoScroll();
+            break;
             
-            if (filteredData.length === 0) {
-                if (inventoryData.length === 0) {
-                    // No items at all
-                    grid.classList.add('hidden');
-                    emptyState.classList.remove('hidden');
-                } else {
-                    // Items exist but filtered out
-                    grid.innerHTML = '<div class="col-span-full text-center py-8 text-gray-500">No items match your search criteria</div>';
-                    grid.classList.remove('hidden');
-                    emptyState.classList.add('hidden');
+        case 'resumeScroll':
+            startAutoScroll();
+            break;
+            
+        case 'goToStart':
+            currentRow = 0;
+            updateScrollPosition();
+            break;
+            
+        case 'goToEnd':
+            const totalRowsEnd = Math.ceil(allBuyerData.length / 5);
+            currentRow = Math.max(0, totalRowsEnd - 1);
+            updateScrollPosition();
+            break;
+            
+        case 'refresh':
+            renderCards(window.elementSdk ? window.elementSdk.config : defaultConfig);
+            break;
+            
+        case 'setSpeed':
+            if (data && data.speed) {
+                scrollSpeed = data.speed * 1000; // Convert to milliseconds
+                // Restart auto-scroll with new speed if it's running
+                if (autoScrollInterval) {
+                    stopAutoScroll();
+                    startAutoScroll();
                 }
-                return;
             }
+            break;
             
-            grid.classList.remove('hidden');
-            emptyState.classList.add('hidden');
-            
-            // Create cards for filtered items
-            const cardsHTML = filteredData.map(item => createItemCard(item)).join('');
-            grid.innerHTML = cardsHTML;
-            
-            console.log('Rendered', filteredData.length, 'item cards');
-        }
-
-        function createItemCard(item) {
-            const isHighlighted = highlightedItems.has(item.id);
-            const highlightClass = isHighlighted ? 'highlighted' : '';
-
-            const srIdDisplay = item.sr_id_no ? 
-                `<div class="flex items-center gap-3 mb-3 bg-gradient-to-r from-amber-50 to-orange-50 p-3 rounded-xl border-l-4 border-amber-400 shadow-sm relative group">
-                    <div class="bg-gradient-to-br from-amber-400 to-orange-500 p-2 rounded-lg shadow-md">
-                        <span class="text-white text-lg">🏷️</span>
-                    </div>
-                    <div class="flex-1">
-                        <div class="text-xs text-amber-600 font-bold uppercase tracking-wide">SR/ID NO</div>
-                        <div class="font-black text-amber-800 text-xl">${item.sr_id_no}</div>
-                    </div>
-                    
-                    <!-- Hover Action Buttons for SR/ID -->
-                    <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-all duration-300 flex gap-2 z-20">
-                        <button onclick="editSrId('${item.id}', '${item.sr_id_no}')" 
-                                class="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-lg text-xs font-semibold transition-all shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center gap-1">
-                            <span>✏️</span>
-                            <span>Edit</span>
-                        </button>
-                        <button onclick="removeSrId('${item.id}')" 
-                                class="bg-red-500 hover:bg-red-600 text-white p-2 rounded-lg text-xs font-semibold transition-all shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center gap-1">
-                            <span>🗑️</span>
-                            <span>Remove</span>
-                        </button>
-                    </div>
-                </div>` : '';
-
-            return `
-                <div class="inventory-card bg-white rounded-2xl shadow-xl p-6 ${highlightClass} fade-in border border-gray-100 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 relative group" data-item-id="${item.id}" style="background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);">
-                    <!-- Header Section -->
-                    <div class="flex justify-between items-start mb-6">
-                        <div class="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white px-4 py-2 rounded-full text-xs font-black uppercase tracking-wider shadow-lg">
-                            <span class="drop-shadow-sm">ID: ${item.id.slice(-8)}</span>
-                        </div>
-                        <div class="led-active-label">
-                            ✅ ACTIVE
-                        </div>
-                    </div>
-                    
-                    <!-- Card Action Buttons (Top Right Corner) -->
-                    <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-300 flex gap-2 z-30">
-                        <button onclick="editItem('${item.id}')" 
-                                class="bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-xl text-sm font-semibold transition-all shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center gap-2">
-                            <span>✏️</span>
-                            <span>Edit</span>
-                        </button>
-                        <button onclick="deleteItem('${item.id}')" 
-                                class="bg-red-500 hover:bg-red-600 text-white p-3 rounded-xl text-sm font-semibold transition-all shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center gap-2">
-                            <span>🗑️</span>
-                            <span>Delete</span>
-                        </button>
-                    </div>
-                    
-                    <!-- Main Content Card -->
-                    <div class="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-6 rounded-2xl mb-6 border-2 border-blue-100 shadow-inner relative overflow-hidden">
-                        <!-- Decorative Background Pattern -->
-                        <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-blue-200/30 to-transparent rounded-full -translate-y-16 translate-x-16"></div>
-                        <div class="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-purple-200/30 to-transparent rounded-full translate-y-12 -translate-x-12"></div>
-                        
-                        <!-- Buyer Name Section -->
-                        <div class="relative z-10">
-                            <div class="mb-4">
-                                <div class="text-xs text-blue-600 font-bold uppercase tracking-wide mb-1">Buyer Name</div>
-                                <h3 class="text-2xl font-black text-gray-800 leading-tight">${item.buyer_name}</h3>
-                            </div>
-                            
-                            <!-- Rack Location Section -->
-                            <div class="bg-white/60 backdrop-blur-sm p-4 rounded-xl border border-white/50 shadow-sm">
-                                <div class="text-xs text-emerald-600 font-bold uppercase tracking-wide">Rack Location</div>
-                                <div class="font-black text-gray-800 text-xl">${item.rack_location}</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- SR/ID Section -->
-                    ${srIdDisplay}
-                    
-                    <!-- Date Section -->
-                    <div class="bg-gradient-to-r from-slate-50 to-gray-50 p-4 rounded-xl mb-4 border border-slate-200 shadow-sm">
-                        <div class="flex items-center gap-3">
-                            <div class="bg-gradient-to-br from-slate-400 to-gray-500 p-2 rounded-lg shadow-md">
-                                <span class="text-white text-sm">📅</span>
-                            </div>
-                            <div class="text-sm text-slate-600 font-bold">
-                                Added: ${new Date(item.created_at).toLocaleDateString('en-US', {
-                                    year: 'numeric',
-                                    month: 'short',
-                                    day: 'numeric',
-                                    hour: '2-digit',
-                                    minute: '2-digit'
-                                })}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        // Item management
-        async function addItem(formData) {
-            if (currentRecordCount >= 999) {
-                showToast("Maximum limit of 999 items reached. Please delete some items first.", "error");
-                return false;
-            }
-
-            const itemId = generateId();
-            const itemData = {
-                buyer_name: formData.buyerName,
-                rack_location: formData.rackLocation,
-                sr_id_no: formData.srIdNo || '',
-                created_at: new Date().toISOString(),
-                updated_at: new Date().toISOString()
-            };
-
-            try {
-                await database.ref(`inventory/${itemId}`).set(itemData);
-                showToast("আইটেম সফলভাবে যোগ করা হয়েছে", "success");
-                return true;
-            } catch (error) {
-                console.error("Error adding item:", error);
-                showToast("আইটেম যোগ করতে ত্রুটি", "error");
-                return false;
-            }
-        }
-
-        async function deleteItem(itemId) {
-            // Show confirmation dialog
-            if (!showConfirmDialog(`আপনি কি নিশ্চিত যে এই আইটেমটি ডিলিট করতে চান?`)) {
-                return;
-            }
-
-            try {
-                await database.ref(`inventory/${itemId}`).remove();
-                showToast("আইটেম সফলভাবে ডিলিট করা হয়েছে", "success");
-            } catch (error) {
-                console.error("Error deleting item:", error);
-                showToast("আইটেম ডিলিট করতে ত্রুটি", "error");
-            }
-        }
-
-        // Edit item function
-        async function editItem(itemId) {
-            const item = inventoryData.find(i => i.id === itemId);
-            if (!item) return;
-
-            // Create edit modal
-            const modal = document.createElement('div');
-            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4';
-            modal.innerHTML = `
-                <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full max-h-[90vh] overflow-y-auto">
-                    <div class="flex items-center gap-3 mb-6">
-                        <div class="bg-blue-500 p-3 rounded-xl">
-                            <span class="text-white text-2xl">✏️</span>
-                        </div>
-                        <div>
-                            <h3 class="text-2xl font-bold text-gray-800">Edit Item</h3>
-                            <p class="text-gray-600">আইটেমের তথ্য সম্পাদনা করুন</p>
-                        </div>
-                    </div>
-                    
-                    <form id="edit-item-form" class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">BUYER NAME *</label>
-                            <input type="text" id="edit-buyer-name" value="${item.buyer_name}" required 
-                                   class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none transition-colors text-lg font-medium">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">RACK LOCATION *</label>
-                            <input type="text" id="edit-rack-location" value="${item.rack_location}" required 
-                                   class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none transition-colors text-lg font-medium">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">SR/ID NO (Optional)</label>
-                            <input type="text" id="edit-sr-id-no" value="${item.sr_id_no || ''}" 
-                                   class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none transition-colors text-lg font-medium">
-                        </div>
-                        <div class="flex gap-3 pt-4">
-                            <button type="submit" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-lg font-semibold flex items-center justify-center gap-2 transition-colors">
-                                <span id="edit-btn-text">Save Changes</span>
-                                <div id="edit-btn-spinner" class="loading-spinner hidden"></div>
-                            </button>
-                            <button type="button" onclick="closeEditModal()" class="px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-lg font-semibold transition-colors">
-                                Cancel
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            `;
-
-            document.body.appendChild(modal);
-
-            // Handle form submission
-            document.getElementById('edit-item-form').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                
-                const submitBtn = document.getElementById('edit-btn-text');
-                const spinner = document.getElementById('edit-btn-spinner');
-                
-                submitBtn.textContent = 'Saving...';
-                spinner.classList.remove('hidden');
-                
-                const updatedItem = {
-                    buyer_name: document.getElementById('edit-buyer-name').value,
-                    rack_location: document.getElementById('edit-rack-location').value,
-                    sr_id_no: document.getElementById('edit-sr-id-no').value,
-                    updated_at: new Date().toISOString()
-                };
-                
-                try {
-                    await database.ref(`inventory/${itemId}`).update(updatedItem);
-                    showToast("আইটেম সফলভাবে আপডেট করা হয়েছে", "success");
-                    closeEditModal();
-                } catch (error) {
-                    console.error("Error updating item:", error);
-                    showToast("আইটেম আপডেট করতে ত্রুটি", "error");
-                }
-                
-                submitBtn.textContent = 'Save Changes';
-                spinner.classList.add('hidden');
-            });
-
-            // Focus first input
+        case 'showStats':
+            // Highlight stats bar
+            const statsBar = document.querySelector('.stats-bar');
+            statsBar.style.animation = 'pulse 1s';
             setTimeout(() => {
-                document.getElementById('edit-buyer-name').focus();
-            }, 100);
-        }
-
-        // Edit SR/ID function
-        async function editSrId(itemId, currentSrId) {
-            const item = inventoryData.find(i => i.id === itemId);
-            if (!item) return;
-
-            // Create edit modal for SR/ID
-            const modal = document.createElement('div');
-            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4';
-            modal.innerHTML = `
-                <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full">
-                    <div class="flex items-center gap-3 mb-6">
-                        <div class="bg-amber-500 p-3 rounded-xl">
-                            <span class="text-white text-2xl">🏷️</span>
-                        </div>
-                        <div>
-                            <h3 class="text-2xl font-bold text-gray-800">Edit SR/ID</h3>
-                            <p class="text-gray-600">SR/ID নম্বর সম্পাদনা করুন</p>
-                        </div>
-                    </div>
-                    
-                    <form id="edit-srid-form" class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">SR/ID NO</label>
-                            <input type="text" id="edit-srid-input" value="${currentSrId}" 
-                                   class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-amber-500 focus:outline-none transition-colors text-lg font-medium">
-                        </div>
-                        <div class="flex gap-3 pt-4">
-                            <button type="submit" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-lg font-semibold flex items-center justify-center gap-2 transition-colors">
-                                <span id="srid-btn-text">Save</span>
-                                <div id="srid-btn-spinner" class="loading-spinner hidden"></div>
-                            </button>
-                            <button type="button" onclick="closeEditModal()" class="px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-lg font-semibold transition-colors">
-                                Cancel
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            `;
-
-            document.body.appendChild(modal);
-
-            // Handle form submission
-            document.getElementById('edit-srid-form').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                
-                const submitBtn = document.getElementById('srid-btn-text');
-                const spinner = document.getElementById('srid-btn-spinner');
-                
-                submitBtn.textContent = 'Saving...';
-                spinner.classList.remove('hidden');
-                
-                try {
-                    await database.ref(`inventory/${itemId}`).update({
-                        sr_id_no: document.getElementById('edit-srid-input').value,
-                        updated_at: new Date().toISOString()
-                    });
-                    showToast("SR/ID সফলভাবে আপডেট করা হয়েছে", "success");
-                    closeEditModal();
-                } catch (error) {
-                    console.error("Error updating SR/ID:", error);
-                    showToast("SR/ID আপডেট করতে ত্রুটি", "error");
-                }
-                
-                submitBtn.textContent = 'Save';
-                spinner.classList.add('hidden');
-            });
-
-            // Focus input
+                statsBar.style.animation = '';
+            }, 1000);
+            break;
+            
+        case 'toggleFullscreen':
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else {
+                document.exitFullscreen();
+            }
+            break;
+            
+        case 'screenshot':
+            // Visual feedback for screenshot
+            document.body.style.filter = 'brightness(1.5)';
             setTimeout(() => {
-                document.getElementById('edit-srid-input').focus();
-                document.getElementById('edit-srid-input').select();
-            }, 100);
-        }
-
-        // Remove SR/ID function
-        async function removeSrId(itemId) {
-            if (!showConfirmDialog('আপনি কি নিশ্চিত যে SR/ID নম্বর সরাতে চান?')) {
-                return;
-            }
-
-            try {
-                await database.ref(`inventory/${itemId}`).update({
-                    sr_id_no: '',
-                    updated_at: new Date().toISOString()
-                });
-                showToast("SR/ID সফলভাবে সরানো হয়েছে", "success");
-            } catch (error) {
-                console.error("Error removing SR/ID:", error);
-                showToast("SR/ID সরাতে ত্রুটি", "error");
-            }
-        }
-
-        // Close edit modal
-        function closeEditModal() {
-            const modal = document.querySelector('.fixed.inset-0.bg-black.bg-opacity-50');
-            if (modal) {
-                modal.remove();
-            }
-        }
-
-        // Confirmation dialog function
-        function showConfirmDialog(message) {
-            const modal = document.createElement('div');
-            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4';
-            modal.innerHTML = `
-                <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full text-center">
-                    <div class="text-6xl mb-4">⚠️</div>
-                    <h3 class="text-xl font-bold text-gray-800 mb-4">নিশ্চিতকরণ</h3>
-                    <p class="text-gray-600 mb-6">${message}</p>
-                    <div class="flex gap-3">
-                        <button id="confirm-yes" class="flex-1 bg-red-600 hover:bg-red-700 text-white py-3 px-6 rounded-lg font-semibold transition-colors">
-                            হ্যাঁ, নিশ্চিত
-                        </button>
-                        <button id="confirm-no" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-3 px-6 rounded-lg font-semibold transition-colors">
-                            না, বাতিল
-                        </button>
-                    </div>
-                </div>
-            `;
-
-            document.body.appendChild(modal);
-
-            return new Promise((resolve) => {
-                document.getElementById('confirm-yes').addEventListener('click', () => {
-                    modal.remove();
-                    resolve(true);
-                });
-                
-                document.getElementById('confirm-no').addEventListener('click', () => {
-                    modal.remove();
-                    resolve(false);
-                });
-
-                // Close on backdrop click
-                modal.addEventListener('click', (e) => {
-                    if (e.target === modal) {
-                        modal.remove();
-                        resolve(false);
-                    }
-                });
-            });
-        }
-
-        function generateId() {
-            return 'item_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-        }
-
-        // Update total count display
-        function updateTotalCount() {
-            const totalCount = document.getElementById('total-count');
-            if (totalCount) {
-                totalCount.textContent = inventoryData.length;
-            }
-        }
-
-        // UI utilities
-        function showToast(message, type = 'info') {
-            const toast = document.createElement('div');
+                document.body.style.filter = '';
+                showToast('Screenshot captured');
+            }, 200);
+            break;
             
-            // Enhanced styling based on type
-            let toastClass, icon, bgGradient, shadowColor;
+        case 'emergencyAlert':
+            // Emergency alert animation
+            document.body.style.animation = 'emergencyFlash 0.5s';
+            setTimeout(() => {
+                document.body.style.animation = '';
+            }, 500);
             
-            switch(type) {
-                case 'success':
-                    toastClass = 'success-toast';
-                    icon = '✅';
-                    bgGradient = 'linear-gradient(135deg, #10b981, #059669, #047857)';
-                    shadowColor = 'rgba(16, 185, 129, 0.4)';
-                    break;
-                case 'error':
-                    toastClass = 'error-toast';
-                    icon = '❌';
-                    bgGradient = 'linear-gradient(135deg, #ef4444, #dc2626, #b91c1c)';
-                    shadowColor = 'rgba(239, 68, 68, 0.4)';
-                    break;
-                default:
-                    toastClass = 'info-toast';
-                    icon = 'ℹ️';
-                    bgGradient = 'linear-gradient(135deg, #3b82f6, #2563eb, #1d4ed8)';
-                    shadowColor = 'rgba(59, 130, 246, 0.4)';
-            }
-            
-            toast.className = `fixed top-4 right-4 z-50 ${toastClass}`;
-            toast.style.cssText = `
-                background: ${bgGradient};
+            // Show emergency message
+            const emergencyDiv = document.createElement('div');
+            emergencyDiv.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: #ff4757;
                 color: white;
-                padding: 16px 24px;
-                border-radius: 16px;
-                font-weight: 600;
-                font-size: 15px;
-                box-shadow: 
-                    0 10px 25px ${shadowColor},
-                    0 4px 12px rgba(0, 0, 0, 0.15),
-                    0 0 0 1px rgba(255, 255, 255, 0.1);
-                border: 2px solid rgba(255, 255, 255, 0.2);
-                backdrop-filter: blur(10px);
-                transform: translateX(100%);
-                transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-                min-width: 300px;
-                max-width: 400px;
+                padding: 30px 50px;
+                border-radius: 20px;
+                font-size: 32px;
+                font-weight: 900;
+                z-index: 10000;
+                animation: emergencyPulse 1s;
             `;
+            emergencyDiv.textContent = '⚠️ EMERGENCY ALERT ⚠️';
+            document.body.appendChild(emergencyDiv);
             
-            toast.innerHTML = `
-                <div style="display: flex; align-items: center; gap: 12px;">
-                    <div style="
-                        font-size: 24px;
-                        animation: bounce 0.6s ease-in-out;
-                        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
-                    ">${icon}</div>
-                    <div style="flex: 1;">
-                        <div style="
-                            font-weight: 700;
-                            margin-bottom: 2px;
-                            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
-                        ">${type === 'success' ? 'সফল!' : type === 'error' ? 'ত্রুটি!' : 'তথ্য'}</div>
-                        <div style="
-                            font-size: 14px;
-                            opacity: 0.95;
-                            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
-                        ">${message}</div>
-                    </div>
-                    <div style="
-                        width: 4px;
-                        height: 40px;
-                        background: rgba(255, 255, 255, 0.3);
-                        border-radius: 2px;
-                        animation: progress 3s linear;
-                    "></div>
-                </div>
-            `;
-            
-            // Add keyframe animations
-            if (!document.getElementById('toast-animations')) {
-                const style = document.createElement('style');
-                style.id = 'toast-animations';
-                style.textContent = `
-                    @keyframes bounce {
-                        0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-                        40% { transform: translateY(-8px); }
-                        60% { transform: translateY(-4px); }
-                    }
-                    @keyframes progress {
-                        0% { height: 40px; opacity: 1; }
-                        100% { height: 0px; opacity: 0.3; }
-                    }
-                    .success-toast:hover { transform: translateX(0) scale(1.02) !important; }
-                    .error-toast:hover { transform: translateX(0) scale(1.02) !important; }
-                    .info-toast:hover { transform: translateX(0) scale(1.02) !important; }
-                `;
-                document.head.appendChild(style);
-            }
-            
-            document.body.appendChild(toast);
-            
-            // Slide in animation
             setTimeout(() => {
-                toast.style.transform = 'translateX(0)';
-            }, 100);
-            
-            // Auto remove with slide out animation
-            setTimeout(() => {
-                toast.style.transform = 'translateX(100%)';
-                toast.style.opacity = '0';
-                setTimeout(() => {
-                    if (toast.parentNode) {
-                        toast.remove();
-                    }
-                }, 400);
+                emergencyDiv.remove();
             }, 3000);
-            
-            // Click to dismiss
-            toast.addEventListener('click', () => {
-                toast.style.transform = 'translateX(100%)';
-                toast.style.opacity = '0';
-                setTimeout(() => {
-                    if (toast.parentNode) {
-                        toast.remove();
-                    }
-                }, 400);
+            break;
+    }
+}
+
+function updateScrollPosition() {
+    const gridWrapper = document.getElementById('gridWrapper');
+    const cardHeight = 340;
+    const gap = 30;
+    const padding = 40;
+    const rowHeight = cardHeight + gap + padding;
+    
+    gridWrapper.style.transform = `translateY(-${currentRow * rowHeight}px)`;
+}
+
+// Toast notification function
+function showToast(message) {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.classList.add('show');
+    
+    setTimeout(() => {
+        toast.classList.remove('show');
+    }, 2000);
+}
+
+// Update time and date
+function updateDateTime() {
+  const now = new Date();
+  
+  const timeString = now.toLocaleTimeString('en-US', { 
+    hour12: false, 
+    hour: '2-digit', 
+    minute: '2-digit', 
+    second: '2-digit' 
+  });
+  
+  const dateString = now.toLocaleDateString('en-US', { 
+    weekday: 'long', 
+    year: 'numeric', 
+    month: 'long', 
+    day: 'numeric' 
+  });
+  
+  document.getElementById('currentTime').textContent = timeString;
+  document.getElementById('currentDate').textContent = dateString;
+}
+
+// Update stats
+function updateStats() {
+  const totalBuyers = allBuyerData.length;
+  const uniqueLocations = new Set(allBuyerData.map(b => b.location)).size;
+  
+  const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+  const filteredData = allBuyerData.filter(buyer => 
+    buyer.name.toLowerCase().includes(searchTerm) || 
+    buyer.location.toLowerCase().includes(searchTerm)
+  );
+  
+  document.getElementById('totalBuyers').textContent = totalBuyers;
+  document.getElementById('totalLocations').textContent = uniqueLocations;
+  document.getElementById('activeBuyers').textContent = totalBuyers;
+  document.getElementById('displayedBuyers').textContent = filteredData.length;
+}
+
+async function onConfigChange(config) {
+  document.body.style.background = `linear-gradient(135deg, #001f3f 0%, ${config.background_color || defaultConfig.background_color} 50%, #005ca9 100%)`;
+  
+  const searchInput = document.getElementById('searchInput');
+  if (searchInput) {
+    searchInput.placeholder = config.search_placeholder || defaultConfig.search_placeholder;
+  }
+  
+  const buyerNameLabel = document.getElementById('buyerNameLabel');
+  if (buyerNameLabel) {
+    buyerNameLabel.textContent = config.buyer_label || defaultConfig.buyer_label;
+  }
+  
+  const buyerLocationLabel = document.getElementById('buyerLocationLabel');
+  if (buyerLocationLabel) {
+    buyerLocationLabel.textContent = config.location_label || defaultConfig.location_label;
+  }
+  
+  renderCards(config);
+  updateStats();
+}
+
+function renderCards(config) {
+  const cardGrid = document.getElementById('cardGrid');
+  const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+  
+  const filteredData = allBuyerData.filter(buyer => 
+    buyer.name.toLowerCase().includes(searchTerm) || 
+    buyer.location.toLowerCase().includes(searchTerm)
+  );
+  
+  if (filteredData.length === 0) {
+    cardGrid.innerHTML = '<div class="empty-state">📭 No buyers found. Click the plus button to add new buyer.</div>';
+    stopAutoScroll();
+    updateStats();
+    return;
+  }
+  
+  cardGrid.innerHTML = filteredData.map(buyer => `
+    <div class="card ${searchTerm ? 'jump' : ''}" data-buyer-id="${buyer.__backendId}" style="background: linear-gradient(135deg, ${config.surface_color || defaultConfig.surface_color} 0%, #ffd585 100%);">
+      <div class="card-actions">
+        <button class="action-btn edit-btn" onclick="editBuyer('${buyer.__backendId}')" aria-label="Edit buyer">✏️</button>
+        <button class="action-btn delete-btn" onclick="deleteBuyer('${buyer.__backendId}')" aria-label="Delete buyer">🗑️</button>
+      </div>
+      <div class="status-indicator"></div>
+      <div class="label" style="color: ${config.text_color || defaultConfig.text_color};">
+        ${config.buyer_label || defaultConfig.buyer_label}
+      </div>
+      <div class="value" style="background: ${config.secondary_action_color || defaultConfig.secondary_action_color}; color: ${config.text_color || defaultConfig.text_color};">
+        ${escapeHtml(buyer.name)}
+      </div>
+      <div class="label" style="color: ${config.text_color || defaultConfig.text_color};">
+        ${config.location_label || defaultConfig.location_label}
+      </div>
+      <div class="value" style="background: ${config.secondary_action_color || defaultConfig.secondary_action_color}; color: ${config.text_color || defaultConfig.text_color};">
+        ${escapeHtml(buyer.location)}
+      </div>
+    </div>
+  `).join('');
+  
+  updateStats();
+  
+  // Start auto-scroll if more than 5 cards
+  if (filteredData.length > 5 && window.innerWidth > 768) {
+    startAutoScroll();
+  } else {
+    stopAutoScroll();
+  }
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+function startAutoScroll() {
+  stopAutoScroll();
+  
+  autoScrollInterval = setInterval(() => {
+    const totalCards = allBuyerData.length;
+    const totalRows = Math.ceil(totalCards / 5);
+    
+    if (totalRows <= 1) {
+      stopAutoScroll();
+      return;
+    }
+    
+    currentRow++;
+    
+    // Loop back to start after showing all rows
+    if (currentRow >= totalRows) {
+      const gridWrapper = document.getElementById('gridWrapper');
+      gridWrapper.style.transition = 'none';
+      gridWrapper.style.transform = 'translateY(0)';
+      currentRow = 0;
+      
+      // Re-enable transition after a brief moment
+      setTimeout(() => {
+        gridWrapper.style.transition = 'transform 1.2s ease-in-out';
+      }, 50);
+      return;
+    }
+    
+    updateScrollPosition();
+  }, scrollSpeed);
+}
+
+function stopAutoScroll() {
+  if (autoScrollInterval) {
+    clearInterval(autoScrollInterval);
+    autoScrollInterval = null;
+  }
+  currentRow = 0;
+  const gridWrapper = document.getElementById('gridWrapper');
+  if (gridWrapper) {
+    gridWrapper.style.transform = 'translateY(0)';
+  }
+}
+
+function openModal(buyer = null) {
+  const modal = document.getElementById('modal');
+  const modalTitle = document.getElementById('modalTitle');
+  const buyerNameInput = document.getElementById('buyerName');
+  const buyerLocationInput = document.getElementById('buyerLocation');
+  
+  if (buyer) {
+    modalTitle.textContent = 'Edit Buyer';
+    buyerNameInput.value = buyer.name;
+    buyerLocationInput.value = buyer.location;
+    currentEditingBuyer = buyer;
+  } else {
+    modalTitle.textContent = 'Add New Buyer';
+    buyerNameInput.value = '';
+    buyerLocationInput.value = '';
+    currentEditingBuyer = null;
+  }
+  
+  modal.classList.add('active');
+  buyerNameInput.focus();
+}
+
+function closeModal() {
+  const modal = document.getElementById('modal');
+  modal.classList.remove('active');
+  currentEditingBuyer = null;
+}
+
+function showErrorMessage(message) {
+  const errorModal = document.createElement('div');
+  errorModal.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 20px; box-shadow: 0 8px 30px rgba(0,0,0,0.5); z-index: 3000; border: 4px solid #dc2626; text-align: center; max-width: 500px;';
+  errorModal.innerHTML = `<p style="margin: 0; font-size: 22px; color: #dc2626; font-weight: 700;">${message}</p>`;
+  document.body.appendChild(errorModal);
+  setTimeout(() => errorModal.remove(), 3000);
+}
+
+// Firebase data operations
+const firebaseDataSdk = {
+  // Create a new buyer
+  async create(buyer) {
+    try {
+      const newBuyerRef = buyersRef.push();
+      const buyerWithId = {
+        ...buyer,
+        __backendId: newBuyerRef.key
+      };
+      await newBuyerRef.set(buyerWithId);
+      return { isOk: true };
+    } catch (error) {
+      console.error("Error creating buyer:", error);
+      return { isOk: false, error: error.message };
+    }
+  },
+  
+  // Update an existing buyer
+  async update(buyer) {
+    try {
+      if (!buyer.__backendId) {
+        throw new Error("Buyer ID is missing");
+      }
+      await buyersRef.child(buyer.__backendId).update({
+        name: buyer.name,
+        location: buyer.location
+      });
+      return { isOk: true };
+    } catch (error) {
+      console.error("Error updating buyer:", error);
+      return { isOk: false, error: error.message };
+    }
+  },
+  
+  // Delete a buyer
+  async delete(buyer) {
+    try {
+      if (!buyer.__backendId) {
+        throw new Error("Buyer ID is missing");
+      }
+      await buyersRef.child(buyer.__backendId).remove();
+      return { isOk: true };
+    } catch (error) {
+      console.error("Error deleting buyer:", error);
+      return { isOk: false, error: error.message };
+    }
+  },
+  
+  // Initialize and listen for data changes
+  async init(dataHandler) {
+    try {
+      buyersRef.on('value', (snapshot) => {
+        const data = snapshot.val();
+        const buyers = [];
+        
+        if (data) {
+          Object.keys(data).forEach(key => {
+            buyers.push({
+              ...data[key],
+              __backendId: key
             });
+          });
         }
+        
+        dataHandler.onDataChanged(buyers);
+      });
+      
+      return { isOk: true };
+    } catch (error) {
+      console.error("Error initializing Firebase:", error);
+      return { isOk: false, error: error.message };
+    }
+  }
+};
 
-        // Event listeners
-        document.addEventListener('DOMContentLoaded', () => {
-            initializeSDK();
-            
-            // Navigation toggle
-            document.getElementById('nav-toggle-btn').addEventListener('click', () => {
-                const nav = document.getElementById('navigation-bar');
-                nav.classList.toggle('hidden');
-            });
-            
-            // Mode switching
-            document.getElementById('user-mode-btn').addEventListener('click', () => switchMode('user'));
-            document.getElementById('controller-mode-btn').addEventListener('click', () => showControllerAccess());
-            document.getElementById('display-mode-btn').addEventListener('click', () => switchMode('display'));
-            
-            // Controller access
-            document.getElementById('verify-code-btn').addEventListener('click', verifyControllerCode);
-            document.getElementById('cancel-controller-btn').addEventListener('click', hideControllerAccess);
-            
-            // Access code input - Enter key support
-            document.getElementById('access-code').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    verifyControllerCode();
-                }
-            });
-            
-            // Search and filter - Make sure it works in all modes
-            document.getElementById('search-input').addEventListener('input', () => {
-                applyFilters();
-                renderInventory();
-            });
-            
-            // Items per row control
-            document.getElementById('items-per-row').addEventListener('change', (e) => {
-                updateGridLayout(e.target.value);
-                if (currentMode === 'controller') {
-                    sendSyncCommand('grid_layout', { layout: e.target.value });
-                }
-            });
-            
-            document.getElementById('clear-search-btn').addEventListener('click', () => {
-                document.getElementById('search-input').value = '';
-                document.getElementById('item-type-filter').value = '';
-                highlightedItems.clear();
-                applyFilters();
-                renderInventory();
-                
-                if (currentMode === 'controller') {
-                    sendSyncCommand('clear_highlights', {});
-                }
-            });
-            
-            // User Add Item controls
-            document.getElementById('user-add-item-btn').addEventListener('click', () => {
-                document.getElementById('user-add-item-form').classList.toggle('hidden');
-                if (!document.getElementById('user-add-item-form').classList.contains('hidden')) {
-                    document.getElementById('user-buyer-name').focus();
-                }
-            });
-            
-            document.getElementById('user-cancel-add-btn').addEventListener('click', () => {
-                document.getElementById('user-add-item-form').classList.add('hidden');
-                document.getElementById('user-item-form').reset();
-            });
+window.editBuyer = function(buyerId) {
+  const buyer = allBuyerData.find(b => b.__backendId === buyerId);
+  if (buyer) {
+    openModal(buyer);
+  }
+};
 
-            // Controller controls
-            document.getElementById('add-item-btn').addEventListener('click', () => {
-                document.getElementById('add-item-form').classList.toggle('hidden');
-                if (!document.getElementById('add-item-form').classList.contains('hidden')) {
-                    document.getElementById('buyer-name').focus();
-                }
-            });
-            
-            document.getElementById('cancel-add-btn').addEventListener('click', () => {
-                document.getElementById('add-item-form').classList.add('hidden');
-                document.getElementById('item-form').reset();
-            });
+window.deleteBuyer = async function(buyerId) {
+  const buyer = allBuyerData.find(b => b.__backendId === buyerId);
+  if (!buyer) return;
+  
+  const card = document.querySelector(`[data-buyer-id="${buyerId}"]`);
+  if (card) {
+    card.style.opacity = '0.5';
+  }
+  
+  const result = await firebaseDataSdk.delete(buyer);
+  
+  if (!result.isOk) {
+    if (card) {
+      card.style.opacity = '1';
+    }
+    showErrorMessage('❌ Failed to delete buyer. Please try again.');
+  }
+};
 
-            // Controller logout
-            document.getElementById('controller-logout-btn').addEventListener('click', () => {
-                logoutController();
-            });
-            
-            document.getElementById('clear-highlights-btn').addEventListener('click', () => {
-                document.getElementById('search-input').value = '';
-                document.getElementById('item-type-filter').value = '';
-                highlightedItems.clear();
-                applyFilters();
-                renderInventory();
-                
-                if (currentMode === 'controller') {
-                    sendSyncCommand('clear_highlights', {});
-                }
-            });
-            
-            document.getElementById('scroll-top-btn').addEventListener('click', () => {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-                
-                if (currentMode === 'controller') {
-                    sendSyncCommand('scroll_to_top', {});
-                }
-            });
-            
-            // User Form submission
-            document.getElementById('user-item-form').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                
-                const submitBtn = document.getElementById('user-add-btn-text');
-                const spinner = document.getElementById('user-add-btn-spinner');
-                
-                submitBtn.textContent = 'Adding...';
-                spinner.classList.remove('hidden');
-                
-                const formData = {
-                    buyerName: document.getElementById('user-buyer-name').value,
-                    rackLocation: document.getElementById('user-rack-location').value,
-                    srIdNo: document.getElementById('user-sr-id-no').value
-                };
-                
-                const success = await addItem(formData);
-                
-                if (success) {
-                    document.getElementById('user-item-form').reset();
-                    document.getElementById('user-add-item-form').classList.add('hidden');
-                }
-                
-                submitBtn.textContent = 'Add Item';
-                spinner.classList.add('hidden');
-            });
-
-            // Controller Form submission
-            document.getElementById('item-form').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                
-                const submitBtn = document.getElementById('add-btn-text');
-                const spinner = document.getElementById('add-btn-spinner');
-                
-                submitBtn.textContent = 'Adding...';
-                spinner.classList.remove('hidden');
-                
-                const formData = {
-                    buyerName: document.getElementById('buyer-name').value,
-                    rackLocation: document.getElementById('rack-location').value,
-                    srIdNo: document.getElementById('sr-id-no').value
-                };
-                
-                const success = await addItem(formData);
-                
-                if (success) {
-                    document.getElementById('item-form').reset();
-                    document.getElementById('add-item-form').classList.add('hidden');
-                }
-                
-                submitBtn.textContent = 'Add Item';
-                spinner.classList.add('hidden');
-            });
-            
-            // Close navigation when clicking outside
-            document.addEventListener('click', (e) => {
-                const nav = document.getElementById('navigation-bar');
-                const navBtn = document.getElementById('nav-toggle-btn');
-                
-                if (!nav.contains(e.target) && !navBtn.contains(e.target)) {
-                    nav.classList.add('hidden');
-                }
-            });
-        });
-    </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99ff01fe11f5ba4f',t:'MTc2MzM4MDE5OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+// Initialize on page load
+(async function init() {
+  // Update time every second
+  updateDateTime();
+  setInterval(updateDateTime, 1000);
+  
+  // Add button click handler
+  const addBtn = document.getElementById('addBtn');
+  if (addBtn) {
+    addBtn.onclick = function() {
+      if (allBuyerData.length >= 999) {
+        showErrorMessage('⚠️ Maximum limit of 999 buyers reached. Please delete some buyers first.');
+        return;
+      }
+      openModal();
+    };
+  }
+  
+  // Cancel button
+  const cancelBtn = document.getElementById('cancelBtn');
+  if (cancelBtn) {
+    cancelBtn.onclick = closeModal;
+  }
+  
+  // Click outside modal to close
+  const modal = document.getElementById('modal');
+  if (modal) {
+    modal.onclick = function(e) {
+      if (e.target.id === 'modal') {
+        closeModal();
+      }
+    };
+  }
+  
+  // Form submission
+  const buyerForm = document.getElementById('buyerForm');
+  const submitBtn = document.getElementById('submitBtn');
+  
+  if (buyerForm) {
+    buyerForm.onsubmit = async function(e) {
+      e.preventDefault();
+      
+      const name = document.getElementById('buyerName').value.trim();
+      const location = document.getElementById('buyerLocation').value.trim();
+      
+      if (!name || !location) return;
+      
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span class="loading-indicator"></span>';
+      
+      if (currentEditingBuyer) {
+        // Update existing buyer
+        const updatedBuyer = {
+          ...currentEditingBuyer,
+          name: name,
+          location: location
+        };
+        
+        const result = await firebaseDataSdk.update(updatedBuyer);
+        
+        if (result.isOk) {
+          closeModal();
+        } else {
+          showErrorMessage('❌ Failed to update buyer. Please try again.');
+        }
+      } else {
+        // Create new buyer
+        if (allBuyerData.length >= 999) {
+          showErrorMessage('⚠️ Maximum limit of 999 buyers reached.');
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Save';
+          return;
+        }
+        
+        const newBuyer = {
+          id: Date.now().toString(),
+          name: name,
+          location: location
+        };
+        
+        const result = await firebaseDataSdk.create(newBuyer);
+        
+        if (result.isOk) {
+          closeModal();
+        } else {
+          showErrorMessage('❌ Failed to add buyer. Please try again.');
+        }
+      }
+      
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Save';
+    };
+  }
+  
+  // Search input
+  const searchInput = document.getElementById('searchInput');
+  if (searchInput) {
+    searchInput.oninput = function() {
+      renderCards(window.elementSdk ? window.elementSdk.config : defaultConfig);
+    };
+  }
+  
+  // Data handler for Firebase
+  const dataHandler = {
+    onDataChanged(data) {
+      allBuyerData = data;
+      renderCards(window.elementSdk ? window.elementSdk.config : defaultConfig);
+    }
+  };
+  
+  // Initialize Firebase
+  const initResult = await firebaseDataSdk.init(dataHandler);
+  if (!initResult.isOk) {
+    console.error('Firebase initialization failed');
+  }
+  
+  // Initialize Element SDK
+  if (window.elementSdk) {
+    window.elementSdk.init({
+      defaultConfig,
+      onConfigChange,
+      mapToCapabilities: (config) => ({
+        recolorables: [
+          {
+            get: () => config.background_color || defaultConfig.background_color,
+            set: (value) => {
+              config.background_color = value;
+              window.elementSdk.setConfig({ background_color: value });
+            }
+          },
+          {
+            get: () => config.surface_color || defaultConfig.surface_color,
+            set: (value) => {
+              config.surface_color = value;
+              window.elementSdk.setConfig({ surface_color: value });
+            }
+          },
+          {
+            get: () => config.text_color || defaultConfig.text_color,
+            set: (value) => {
+              config.text_color = value;
+              window.elementSdk.setConfig({ text_color: value });
+            }
+          },
+          {
+            get: () => config.primary_action_color || defaultConfig.primary_action_color,
+            set: (value) => {
+              config.primary_action_color = value;
+              window.elementSdk.setConfig({ primary_action_color: value });
+            }
+          },
+          {
+            get: () => config.secondary_action_color || defaultConfig.secondary_action_color,
+            set: (value) => {
+              config.secondary_action_color = value;
+              window.elementSdk.setConfig({ secondary_action_color: value });
+            }
+          }
+        ],
+        borderables: [],
+        fontEditable: undefined,
+        fontSizeable: undefined
+      }),
+      mapToEditPanelValues: (config) => new Map([
+        ["search_placeholder", config.search_placeholder || defaultConfig.search_placeholder],
+        ["buyer_label", config.buyer_label || defaultConfig.buyer_label],
+        ["location_label", config.location_label || defaultConfig.location_label]
+      ])
+    });
+  }
+  
+  // Initial render
+  onConfigChange(defaultConfig);
+})();
+</script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9a0dc031c22adaea',t:'MTc2MzUzNDc5MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
     
   </body>
