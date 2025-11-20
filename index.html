@@ -3,7 +3,7 @@
 
   <head>
     <meta charset="UTF-8">
-    <title>LAST DISPLAY WITH REMORT</title>
+    <title>MCD FINISH FABRIC DISPLAY</title>
     
 
   </head>
@@ -213,35 +213,54 @@ html {
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
 }
 
-/* ADD BUTTON */
-.add-btn {
+/* ACTION BUTTONS */
+.action-buttons {
   position: fixed;
   bottom: 40px;
   right: 40px;
-  width: 80px;
-  height: 80px;
-  background: linear-gradient(135deg, #ffc264 0%, #ffb03d 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  z-index: 1500;
+}
+
+.add-btn, .import-btn, .delete-all-btn {
+  width: 70px;
+  height: 70px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 45px;
-  color: #1a1a1a;
+  font-size: 35px;
   cursor: pointer;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
   transition: all 0.3s ease;
-  z-index: 1500;
   border: 4px solid #1a1a1a;
   user-select: none;
 }
 
-.add-btn:hover {
-  transform: scale(1.15) rotate(90deg);
-  box-shadow: 0 8px 30px rgba(255, 194, 100, 0.6);
+.add-btn {
+  background: linear-gradient(135deg, #ffc264 0%, #ffb03d 100%);
+  color: #1a1a1a;
 }
 
-.add-btn:active {
-  transform: scale(1.05) rotate(90deg);
+.import-btn {
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  color: white;
+}
+
+.delete-all-btn {
+  background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+  color: white;
+}
+
+.add-btn:hover, .import-btn:hover, .delete-all-btn:hover {
+  transform: scale(1.15);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+}
+
+.add-btn:active, .import-btn:active, .delete-all-btn:active {
+  transform: scale(1.05);
 }
 
 /* MODAL */
@@ -296,7 +315,7 @@ html {
   letter-spacing: 1px;
 }
 
-.form-group input {
+.form-group input, .form-group textarea {
   width: 100%;
   padding: 18px;
   border: 3px solid #ddd;
@@ -307,10 +326,37 @@ html {
   font-weight: 600;
 }
 
-.form-group input:focus {
+.form-group textarea {
+  min-height: 200px;
+  resize: vertical;
+  font-family: monospace;
+}
+
+.form-group input:focus, .form-group textarea:focus {
   outline: none;
   border-color: #0f5fae;
   box-shadow: 0 0 15px rgba(15, 95, 174, 0.3);
+}
+
+.import-instructions {
+  background: #f0f9ff;
+  border: 2px solid #0284c7;
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  color: #0c4a6e;
+}
+
+.import-instructions h4 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #0284c7;
+}
+
+.import-instructions ol {
+  margin: 0;
+  padding-left: 20px;
 }
 
 .modal-buttons {
@@ -357,6 +403,17 @@ html {
 
 .modal-btn-secondary:hover {
   background: #e5d2b5;
+  transform: translateY(-3px);
+}
+
+.modal-btn-danger {
+  background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4);
+}
+
+.modal-btn-danger:hover {
+  background: linear-gradient(135deg, #b91c1c 0%, #dc2626 100%);
   transform: translateY(-3px);
 }
 
@@ -570,6 +627,37 @@ html {
     opacity: 1;
 }
 
+/* Import preview */
+.import-preview {
+  max-height: 300px;
+  overflow-y: auto;
+  margin: 20px 0;
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  padding: 15px;
+  background: #f9f9f9;
+}
+
+.import-preview-item {
+  display: flex;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.import-preview-item:last-child {
+  border-bottom: none;
+}
+
+.import-preview-name {
+  flex: 1;
+  font-weight: 600;
+}
+
+.import-preview-location {
+  flex: 1;
+  color: #666;
+}
+
 /* RESPONSIVE */
 @media (max-width: 1200px) {
   .grid {
@@ -652,12 +740,15 @@ html {
     min-height: 55px;
   }
   
-  .add-btn {
-    width: 65px;
-    height: 65px;
-    font-size: 38px;
+  .action-buttons {
     bottom: 30px;
     right: 30px;
+  }
+  
+  .add-btn, .import-btn, .delete-all-btn {
+    width: 60px;
+    height: 60px;
+    font-size: 30px;
   }
 }
 
@@ -755,7 +846,12 @@ html {
     <div class="grid-wrapper" id="gridWrapper">
      <div class="grid" id="cardGrid"></div>
     </div>
-   </div><!-- ADD BUTTON --> <button class="add-btn" id="addBtn" aria-label="Add new buyer">+</button> <!-- MODAL -->
+   </div><!-- ACTION BUTTONS -->
+   <div class="action-buttons">
+    <button class="delete-all-btn" id="deleteAllBtn" aria-label="Delete all buyers">🗑️</button>
+    <button class="import-btn" id="importBtn" aria-label="Import buyers from Excel">📋</button>
+    <button class="add-btn" id="addBtn" aria-label="Add new buyer">+</button>
+   </div> <!-- MODAL -->
    <div class="modal" id="modal" role="dialog" aria-modal="true">
     <div class="modal-content">
      <h2 class="modal-header" id="modalTitle">Add New Buyer</h2>
@@ -767,6 +863,44 @@ html {
       <div class="modal-buttons"><button type="button" class="modal-btn modal-btn-secondary" id="cancelBtn">Cancel</button> <button type="submit" class="modal-btn modal-btn-primary" id="submitBtn">Save</button>
       </div>
      </form>
+    </div>
+   </div> <!-- IMPORT MODAL -->
+   <div class="modal" id="importModal" role="dialog" aria-modal="true">
+    <div class="modal-content">
+     <h2 class="modal-header">Import Buyers from Excel</h2>
+     <div class="import-instructions">
+      <h4>Instructions:</h4>
+      <ol>
+        <li>Copy data from Excel (select and copy cells with buyer names and locations)</li>
+        <li>Paste the data in the text area below</li>
+        <li>Each row should contain a buyer name and location separated by a tab or comma</li>
+        <li>Click "Preview" to see the parsed data</li>
+        <li>Click "Import" to add all buyers to the system</li>
+      </ol>
+     </div>
+     <form id="importForm">
+      <div class="form-group"><label for="importData">Excel Data</label> <textarea id="importData" placeholder="Paste your Excel data here..."></textarea>
+      </div>
+      <div id="importPreview" class="import-preview" style="display: none;"></div>
+      <div class="modal-buttons">
+        <button type="button" class="modal-btn modal-btn-secondary" id="cancelImportBtn">Cancel</button>
+        <button type="button" class="modal-btn modal-btn-primary" id="previewImportBtn">Preview</button>
+        <button type="submit" class="modal-btn modal-btn-primary" id="submitImportBtn" disabled>Import</button>
+      </div>
+     </form>
+    </div>
+   </div> <!-- DELETE CONFIRM MODAL -->
+   <div class="modal" id="deleteConfirmModal" role="dialog" aria-modal="true">
+    <div class="modal-content">
+     <h2 class="modal-header">⚠️ Confirm Delete All</h2>
+     <div style="text-align: center; margin: 20px 0; font-size: 18px; color: #333;">
+      Are you sure you want to delete <strong>all buyers</strong>?<br>
+      This action cannot be undone.
+     </div>
+     <div class="modal-buttons">
+      <button type="button" class="modal-btn modal-btn-secondary" id="cancelDeleteBtn">Cancel</button>
+      <button type="button" class="modal-btn modal-btn-danger" id="confirmDeleteBtn">Delete All</button>
+     </div>
     </div>
    </div>
   </main>
@@ -800,6 +934,7 @@ let currentEditingBuyer = null;
 let autoScrollInterval = null;
 let currentRow = 0;
 let scrollSpeed = 5000; // Default scroll speed
+let parsedImportData = [];
 
 // Remote control receiver
 remoteControlRef.on('value', (snapshot) => {
@@ -1154,6 +1289,69 @@ function showErrorMessage(message) {
   setTimeout(() => errorModal.remove(), 3000);
 }
 
+// Parse Excel data
+function parseExcelData(data) {
+  const lines = data.split('\n').filter(line => line.trim());
+  const result = [];
+  
+  for (const line of lines) {
+    // Try to split by tab first, then by comma
+    let parts = line.split('\t');
+    if (parts.length < 2) {
+      parts = line.split(',');
+    }
+    
+    // Clean up parts
+    parts = parts.map(part => part.trim()).filter(part => part);
+    
+    if (parts.length >= 2) {
+      result.push({
+        name: parts[0],
+        location: parts[1]
+      });
+    } else if (parts.length === 1) {
+      // If only one part is found, use it as name and set location to "Unknown"
+      result.push({
+        name: parts[0],
+        location: "Unknown"
+      });
+    }
+  }
+  
+  return result;
+}
+
+// Preview import data
+function previewImportData() {
+  const importData = document.getElementById('importData').value;
+  
+  if (!importData.trim()) {
+    showToast('Please paste data from Excel first');
+    return;
+  }
+  
+  parsedImportData = parseExcelData(importData);
+  
+  if (parsedImportData.length === 0) {
+    showToast('No valid data found. Please check your format.');
+    return;
+  }
+  
+  const previewContainer = document.getElementById('importPreview');
+  previewContainer.innerHTML = `
+    <h3 style="margin-top: 0; margin-bottom: 15px;">Preview (${parsedImportData.length} buyers found):</h3>
+    ${parsedImportData.map(item => `
+      <div class="import-preview-item">
+        <div class="import-preview-name">${escapeHtml(item.name)}</div>
+        <div class="import-preview-location">${escapeHtml(item.location)}</div>
+      </div>
+    `).join('')}
+  `;
+  
+  previewContainer.style.display = 'block';
+  document.getElementById('submitImportBtn').disabled = false;
+}
+
 // Firebase data operations
 const firebaseDataSdk = {
   // Create a new buyer
@@ -1199,6 +1397,17 @@ const firebaseDataSdk = {
       return { isOk: true };
     } catch (error) {
       console.error("Error deleting buyer:", error);
+      return { isOk: false, error: error.message };
+    }
+  },
+  
+  // Delete all buyers
+  async deleteAll() {
+    try {
+      await buyersRef.remove();
+      return { isOk: true };
+    } catch (error) {
+      console.error("Error deleting all buyers:", error);
       return { isOk: false, error: error.message };
     }
   },
@@ -1274,21 +1483,100 @@ window.deleteBuyer = async function(buyerId) {
     };
   }
   
+  // Import button click handler
+  const importBtn = document.getElementById('importBtn');
+  if (importBtn) {
+    importBtn.onclick = function() {
+      const importModal = document.getElementById('importModal');
+      importModal.classList.add('active');
+      document.getElementById('importData').focus();
+    };
+  }
+  
+  // Delete all button click handler
+  const deleteAllBtn = document.getElementById('deleteAllBtn');
+  if (deleteAllBtn) {
+    deleteAllBtn.onclick = function() {
+      if (allBuyerData.length === 0) {
+        showToast('No buyers to delete');
+        return;
+      }
+      const deleteConfirmModal = document.getElementById('deleteConfirmModal');
+      deleteConfirmModal.classList.add('active');
+    };
+  }
+  
   // Cancel button
   const cancelBtn = document.getElementById('cancelBtn');
   if (cancelBtn) {
     cancelBtn.onclick = closeModal;
   }
   
-  // Click outside modal to close
-  const modal = document.getElementById('modal');
-  if (modal) {
-    modal.onclick = function(e) {
-      if (e.target.id === 'modal') {
-        closeModal();
-      }
+  // Cancel import button
+  const cancelImportBtn = document.getElementById('cancelImportBtn');
+  if (cancelImportBtn) {
+    cancelImportBtn.onclick = function() {
+      const importModal = document.getElementById('importModal');
+      importModal.classList.remove('active');
+      document.getElementById('importData').value = '';
+      document.getElementById('importPreview').style.display = 'none';
+      document.getElementById('submitImportBtn').disabled = true;
     };
   }
+  
+  // Cancel delete button
+  const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+  if (cancelDeleteBtn) {
+    cancelDeleteBtn.onclick = function() {
+      const deleteConfirmModal = document.getElementById('deleteConfirmModal');
+      deleteConfirmModal.classList.remove('active');
+    };
+  }
+  
+  // Confirm delete button
+  const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+  if (confirmDeleteBtn) {
+    confirmDeleteBtn.onclick = async function() {
+      const deleteConfirmModal = document.getElementById('deleteConfirmModal');
+      deleteConfirmModal.classList.remove('active');
+      
+      // Show loading state
+      confirmDeleteBtn.disabled = true;
+      confirmDeleteBtn.innerHTML = '<span class="loading-indicator"></span>';
+      
+      const result = await firebaseDataSdk.deleteAll();
+      
+      if (result.isOk) {
+        showToast('All buyers deleted successfully');
+      } else {
+        showErrorMessage('❌ Failed to delete all buyers. Please try again.');
+      }
+      
+      confirmDeleteBtn.disabled = false;
+      confirmDeleteBtn.textContent = 'Delete All';
+    };
+  }
+  
+  // Preview import button
+  const previewImportBtn = document.getElementById('previewImportBtn');
+  if (previewImportBtn) {
+    previewImportBtn.onclick = previewImportData;
+  }
+  
+  // Click outside modal to close
+  const modals = document.querySelectorAll('.modal');
+  modals.forEach(modal => {
+    modal.onclick = function(e) {
+      if (e.target.id === modal.id) {
+        modal.classList.remove('active');
+        if (modal.id === 'importModal') {
+          document.getElementById('importData').value = '';
+          document.getElementById('importPreview').style.display = 'none';
+          document.getElementById('submitImportBtn').disabled = true;
+        }
+      }
+    };
+  });
   
   // Form submission
   const buyerForm = document.getElementById('buyerForm');
@@ -1347,6 +1635,70 @@ window.deleteBuyer = async function(buyerId) {
       
       submitBtn.disabled = false;
       submitBtn.textContent = 'Save';
+    };
+  }
+  
+  // Import form submission
+  const importForm = document.getElementById('importForm');
+  const submitImportBtn = document.getElementById('submitImportBtn');
+  
+  if (importForm) {
+    importForm.onsubmit = async function(e) {
+      e.preventDefault();
+      
+      if (parsedImportData.length === 0) {
+        showToast('No data to import. Please preview first.');
+        return;
+      }
+      
+      submitImportBtn.disabled = true;
+      submitImportBtn.innerHTML = '<span class="loading-indicator"></span>';
+      
+      let successCount = 0;
+      let errorCount = 0;
+      
+      // Process in batches to avoid overwhelming Firebase
+      const batchSize = 10;
+      for (let i = 0; i < parsedImportData.length; i += batchSize) {
+        const batch = parsedImportData.slice(i, i + batchSize);
+        
+        for (const buyer of batch) {
+          const newBuyer = {
+            id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+            name: buyer.name,
+            location: buyer.location
+          };
+          
+          const result = await firebaseDataSdk.create(newBuyer);
+          
+          if (result.isOk) {
+            successCount++;
+          } else {
+            errorCount++;
+          }
+        }
+        
+        // Small delay between batches
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+      
+      const importModal = document.getElementById('importModal');
+      importModal.classList.remove('active');
+      
+      // Show result
+      if (errorCount === 0) {
+        showToast(`Successfully imported ${successCount} buyers`);
+      } else {
+        showToast(`Imported ${successCount} buyers, ${errorCount} failed`);
+      }
+      
+      // Reset form
+      document.getElementById('importData').value = '';
+      document.getElementById('importPreview').style.display = 'none';
+      parsedImportData = [];
+      
+      submitImportBtn.disabled = false;
+      submitImportBtn.textContent = 'Import';
     };
   }
   
